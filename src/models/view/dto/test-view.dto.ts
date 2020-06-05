@@ -20,9 +20,10 @@ export interface TurnDTO {
 }
 
 export interface EdgeDTO {
-    code: string,
+    sequence: number,
     description: string,
     velocity: number,
+    totalTime: number,
     startTimeStamp: string,
     endTimeStamp: string,
     distance: number,

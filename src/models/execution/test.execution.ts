@@ -29,6 +29,6 @@ export interface TestExecutionNode {
     node: {
         code: string,
     },
-    recordedTimeStamp: string,
+    recordedTimeStamp?: string,
     time?: number
 }

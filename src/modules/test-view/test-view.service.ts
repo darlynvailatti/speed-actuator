@@ -49,6 +49,7 @@ export class TestViewService {
 
 
                 let velocity = 0
+                let totalTime = 0
                 let startTimeStamp = ""
                 let endTimeStamp = ""
                 let startNode = null
@@ -56,6 +57,7 @@ export class TestViewService {
 
                 if (executionEdge) {
                     velocity = executionEdge.velocity
+                    totalTime = executionEdge.totalTime
 
                     if (executionEdge.startNode) {
                         startTimeStamp = executionEdge.startNode.recordedTimeStamp
@@ -77,9 +79,10 @@ export class TestViewService {
 
 
                 const edgeDTO: EdgeDTO = {
-                    code: edgeFromTemplate.code,
+                    sequence: edgeFromTemplate.sequence,
                     description: edgeFromTemplate.description,
                     velocity: velocity,
+                    totalTime: totalTime,
                     startTimeStamp: startTimeStamp,
                     endTimeStamp: endTimeStamp,
                     distance: edgeFromTemplate.distance,
@@ -95,8 +98,8 @@ export class TestViewService {
                 number: turn.number,
                 startTimeStamp: turn.startTimeStamp,
                 endTimeStamp: turn.endTimeStamp,
-                recordedStartTime: turn.startTimeStamp,
-                recordedEndTime: turn.endTimeStamp,
+                recordedStartTime: "",
+                recordedEndTime: "",
                 totalTime: turn.totalTime,
                 averageTime: turn.averageTime,
                 edges: edges,
