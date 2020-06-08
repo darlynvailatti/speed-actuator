@@ -16,7 +16,7 @@ export class ProcessorGetCurrentTurnOrCreateOne {
         this.executionNode = executionNode
     }
 
-    execute(): TestExecutionTurn {
+    async execute(): Promise<TestExecutionTurn> {
         let turns : TestExecutionTurn[] = this.test.testExecution.turns
 
         const isNoOneTurn = !turns || turns.length === 0

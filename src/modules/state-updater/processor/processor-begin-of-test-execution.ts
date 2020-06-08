@@ -5,9 +5,9 @@ import { TestStateMachine } from "src/modules/test/impl/test-state-machine";
 import { Logger } from "@nestjs/common";
 
 
-export class ProcessorBeginOfTurn {
+export class ProcessorBeginOfTestExecution {
 
-    private readonly logger = new Logger(ProcessorBeginOfTurn.name)
+    private readonly logger = new Logger(ProcessorBeginOfTestExecution.name)
     
     testTemplate: TestTemplate;
     executionNode: TestExecutionNode;
@@ -26,10 +26,20 @@ export class ProcessorBeginOfTurn {
         this.currentTurn = currentTurn
     }
 
-    execute() : void {
+    async execute() {
+
+        this.validateMandatoryFields()
 
         const firstEdgeTemplate = this.testTemplate.graph.edges.find(e => e.sequence === 1)
+
+        if(!firstEdgeTemplate){
+            throw new Error(`Graph of Test Template ${this.testTemplate.code} don't have edge sequence = 1`)
+        }
+
         const startNodeOfFirstEdgeTemplate = firstEdgeTemplate.startNode
+
+        if(!startNodeOfFirstEdgeTemplate || !startNodeOfFirstEdgeTemplate.code)
+            throw new Error(`First Edge of Graph don't have start node code`)
 
         const isMatchExpectedNode = startNodeOfFirstEdgeTemplate.code === this.executionNode.node.code
         if (!isMatchExpectedNode)
@@ -51,6 +61,27 @@ export class ProcessorBeginOfTurn {
             this.logger.log(`Starting test ${this.test.code}`)
             TestStateMachine.change(this.test, TestState.STARTED)
         }
+
+    }
+
+    private validateMandatoryFields() {
+
+        if(!this.test || !this.test.state )
+            throw new Error(`Test must have defined State`)
+
+        if(!this.testTemplate){
+            throw new Error(`Can´t process begin of turn without TestTemplate`)
+        }
+
+        if(!this.testTemplate.graph || !this.testTemplate.graph.edges){
+            throw new Error(`Graph and Edges is mandatory in TestTemplate`)            
+        }
+
+        if(!this.executionNode || !this.executionNode.node || !this.executionNode.node.code)
+            throw new Error(`Execution Node must have Node Code`)
+
+        if(!this.currentTurn || !this.currentTurn.number)
+            throw new Error(`Current Turn must have number`)
 
     }
 

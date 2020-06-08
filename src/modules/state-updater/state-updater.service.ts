@@ -8,8 +8,8 @@ import { SensorDetectionMessage } from "src/models/sensor/sensor-message";
 import { Constants } from "src/constants/constants";
 import { RedisDatabase } from "../database/redis.service";
 import { TestViewService } from "../test-view/test-view.service";
-import { ProcessorBeginOfTurn } from "./processor/processor-begin-of-turn";
-import { ProcessorMidleOfTurn } from "./processor/processor-midle-of-turn";
+import { ProcessorBeginOfTestExecution } from "./processor/processor-begin-of-test-execution";
+import { ProcessorMidleOfTurn as ProcessorMidleOrEndOfTestExecution } from "./processor/processor-midle-or-end-of-test-execution";
 import ProcessorConvertDetectionToExecutionNode from "./processor/processor-convert-detection-to-execution-node";
 import { ProcessorGetCurrentTurnOrCreateOne } from "./processor/processor-get-current-turn-or-create-one";
 
@@ -36,22 +36,25 @@ export class StateUpdaterService {
     async processDetection(message: string) {
 
         try {
+
+            this.initilizeAttributes()
+
             this.receivedDetectionMessage = message
             this.logger.log(`Process detection message: ${message}`)
 
-            this.findReadyTestOrThrowError()
+            await this.findReadyTestOrThrowError()
             this.createNewExecutionTestIfNotExist()
-            this.findTestTemplateFor()
+            await this.findTestTemplateFor()
             this.parseDetectionMessage()
-            this.convertDetectionToExecutionNode()
-            this.getCurrentTurnOrCreateOne()
+            await this.convertDetectionToExecutionNode()
+            await this.getCurrentTurnOrCreateOne()
 
             const isBeginOfTurn = this.test.state === TestState.READY
 
             if (isBeginOfTurn) {
-                this.processBeginOfTurn()
+                await this.processBeginOfTestExecution()
             } else {
-                this.processMidleOrEndOfTurn()
+                await this.processMidleOrEndOfTestExecution()
             }
 
             this.setCurrentTurnOnTestExecution()
@@ -63,6 +66,16 @@ export class StateUpdaterService {
             this.logger.error(formattedMessageError)
             throw new Error(formattedMessageError)
         }
+    }
+
+    private initilizeAttributes() {
+
+        this.test = null
+        this.testTemplate = null
+        this.sensorDetectionMessage = null
+        this.executionNode = null
+        this.currentTurn = null;
+        this.receivedDetectionMessage = null;
     }
     
     private parseDetectionMessage() {
@@ -104,45 +117,48 @@ export class StateUpdaterService {
     }
 
 
-    private convertDetectionToExecutionNode() {
-        this.executionNode = new ProcessorConvertDetectionToExecutionNode(
+    private async convertDetectionToExecutionNode() {
+        const processor = new ProcessorConvertDetectionToExecutionNode(
             this.sensorDetectionMessage,
             this.testTemplate
-        ).execute()
+        );
+        this.executionNode = await processor.execute()
     }
 
-    private getCurrentTurnOrCreateOne() {
+    private async getCurrentTurnOrCreateOne() {
         
-        this.currentTurn = new ProcessorGetCurrentTurnOrCreateOne(
+        const processor = new ProcessorGetCurrentTurnOrCreateOne(
             this.test,
             this.executionNode
-        ).execute()
+        );
 
+        this.currentTurn = await processor.execute()
         this.logger.log(`Current turn number:  ${this.currentTurn.number}`)
+        
     }
 
-    private processBeginOfTurn() {
-        const processor = new ProcessorBeginOfTurn(
+    private async processBeginOfTestExecution() {
+        const processor = new ProcessorBeginOfTestExecution(
             this.test,
             this.testTemplate,
             this.executionNode,
             this.currentTurn
         )
-        processor.execute()
+        await processor.execute()
     }
 
-    private processMidleOrEndOfTurn() {
-        const processor = new ProcessorMidleOfTurn(
+    private async processMidleOrEndOfTestExecution() {
+        const processor = new ProcessorMidleOrEndOfTestExecution(
             this.test,
             this.testTemplate,
             this.executionNode,
             this.currentTurn
         )
-        processor.execute()
+        await processor.execute()
 
     }
 
-    setCurrentTurnOnTestExecution() {
+    private setCurrentTurnOnTestExecution() {
         this.test.testExecution.turns = this.test.testExecution.turns.filter(t => t.number != this.currentTurn.number)
         this.test.testExecution.turns.push(this.currentTurn)
     }

@@ -18,7 +18,7 @@ export default class ProcessorConvertDetectionToExecutionNode {
         this.testTemplate = testTemplate
     }
 
-    execute(): TestExecutionNode{
+    async execute(): Promise<TestExecutionNode>{
 
         this.validateMandatoryFields()
     

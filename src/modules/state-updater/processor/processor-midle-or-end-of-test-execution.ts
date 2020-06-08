@@ -25,7 +25,7 @@ export class ProcessorMidleOfTurn {
         this.currentTurn = currentTurn
     }
 
-    execute(): void {
+    async execute() {
         // Find last execution Node
         const lastExecutionEdgeBySequence = this.currentTurn.executionEdges
             .sort((a, b) => a.edge.sequence - b.edge.sequence)

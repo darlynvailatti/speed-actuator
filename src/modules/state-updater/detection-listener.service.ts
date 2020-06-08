@@ -29,8 +29,6 @@ export class DetectionListenerService implements OnApplicationBootstrap {
         if(channel === Constants.SENSOR_DETECTION_BROKER_CHANNEL)
           this.testStateUpdaterService.processDetection(message);
       })
-
-      this.logger.log(`should be true:  ${redisSubClient.condition.subscriber}`)
     } catch (error) {
       const formattedLog = `Error on subscribe and register message sensor detection listener: ${error}`;
       this.logger.error(formattedLog, error);
