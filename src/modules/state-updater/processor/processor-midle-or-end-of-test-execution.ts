@@ -8,10 +8,12 @@ export class ProcessorMidleOfTurn {
 
     private readonly logger = new Logger(ProcessorMidleOfTurn.name)
 
-    testTemplate: TestTemplate;
-    executionNode: TestExecutionNode;
-    currentTurn: TestExecutionTurn;
-    test: Test;
+    private testTemplate: TestTemplate;
+    private executionNode: TestExecutionNode;
+    private currentTurn: TestExecutionTurn;
+    private test: Test;
+    private executionEdge: TestExecutionEdge;
+
 
     constructor(
         test: Test,
@@ -26,13 +28,14 @@ export class ProcessorMidleOfTurn {
     }
 
     async execute() {
-        // Find last execution Node
-        const lastExecutionEdgeBySequence = this.currentTurn.executionEdges
-            .sort((a, b) => a.edge.sequence - b.edge.sequence)
-            .reverse()[0]
+        
+        this.checkCurrentTurn() 
+        
+        // Find last execution edge
+        this.executionEdge = this.findLastExecutionEdge()
 
-        const edgeSequence = lastExecutionEdgeBySequence.edge.sequence
-        const edgeTemplate = this.testTemplate.graph.edges.find(e => e.sequence === edgeSequence)
+        const edgeSequence = this.executionEdge.edge.sequence
+        const edgeTemplate = this.findEdgeOnTemplateBySequence(edgeSequence)
 
         const expectedNodeCode = edgeTemplate.endNode.code
 
@@ -40,91 +43,131 @@ export class ProcessorMidleOfTurn {
         if (!isMatchExpectedNode)
             throw new Error(`Node ${this.executionNode.node.code} don't match the expected Node ${expectedNodeCode}`)
 
-        lastExecutionEdgeBySequence.endNode = this.executionNode
+        this.executionEdge.endNode = this.executionNode
 
         const edgeDistance = edgeTemplate.distance
 
-        const edgeRecordedStartTime = Number.parseInt(lastExecutionEdgeBySequence.startNode.recordedTimeStamp)
-        const edgeRecordedEndTime = Number.parseInt(lastExecutionEdgeBySequence.endNode.recordedTimeStamp)
+        const edgeRecordedStartTime = Number.parseInt(this.executionEdge.startNode.recordedTimeStamp)
+        const edgeRecordedEndTime = Number.parseInt(this.executionEdge.endNode.recordedTimeStamp)
         const totalTime = (edgeRecordedEndTime - edgeRecordedStartTime) / 1000
 
-        lastExecutionEdgeBySequence.totalTime = totalTime
-        lastExecutionEdgeBySequence.velocity = edgeDistance / totalTime
+        this.executionEdge.totalTime = totalTime
+        this.executionEdge.velocity = edgeDistance / totalTime
 
-        this.logger.log(`Last execution edge: ${lastExecutionEdgeBySequence}`)
+        this.logger.log(`Last execution edge: ${this.executionEdge}`)
 
 
         const lastEdgeInGraphBySequence = this.testTemplate.graph.edges.sort((a, b) => a.sequence - b.sequence).reverse()[0]
         this.logger.log(`Last Edge in Graph by sequence: ${lastEdgeInGraphBySequence}`)
 
-        const isEndOfTurn = lastExecutionEdgeBySequence.edge.sequence === lastEdgeInGraphBySequence.sequence
+        const isEndOfTurn = this.executionEdge.edge.sequence === lastEdgeInGraphBySequence.sequence
 
         if (isEndOfTurn) {
-            this.logger.log(`End of turn`)
-            const isFinalTurn = this.currentTurn.number === this.test.numberOfTurns
+            this.processEndOfTurn()
+        } else {
+            this.processMidleOfTurn()
+            
+        }
 
-            this.logger.log(`Is final turn? ${isFinalTurn}`)
+    }
 
-            if(!isFinalTurn){
-                const endRecordedTimeStamp = this.executionNode.recordedTimeStamp
-                this.currentTurn.endTimeStamp = endRecordedTimeStamp
-                const newTurn = this.currentTurn.number + 1
+    private findLastExecutionEdge() : TestExecutionEdge{
+        return this.currentTurn.executionEdges
+            .sort((a, b) => a.edge.sequence - b.edge.sequence)
+            .reverse()[0]
+    }
 
-                const firstEdgeOfGraph = this.testTemplate.graph.edges.sort((a,b) => a.sequence - b.sequence)[0]
+    private processMidleOfTurn() {
+        const nextSequence = this.executionEdge.edge.sequence + 1
+        const nextEdge = this.findEdgeOnTemplateBySequence(nextSequence)
 
-                const newStartExecutionEdge : TestExecutionEdge = {
-                    edge: {
-                        sequence: firstEdgeOfGraph.sequence
+        const isLastNodeEqualsToNextNode = nextEdge.startNode.code === this.executionEdge.endNode.node.code
+
+        if (isLastNodeEqualsToNextNode) {
+            this.logger.log(`Last node is equal to next node, creating new execution edge`)
+            const nextExecutionEdge: TestExecutionEdge = {
+                edge: {
+                    sequence: nextEdge.sequence
+                },
+                startNode: {
+                    node: {
+                        code: nextEdge.startNode.code,
                     },
-                    startNode: {
-                        recordedTimeStamp: this.executionNode.recordedTimeStamp,
-                        node: {
-                            code: firstEdgeOfGraph.startNode.code
-                        }
-                    },
-                    endNode: {
-                        node: {
-                            code: firstEdgeOfGraph.endNode.code
-                        }
-                    }
+                    recordedTimeStamp: this.executionNode.recordedTimeStamp
                 }
-
-                this.test.testExecution.turns.push({
-                    number: newTurn,
-                    startTimeStamp: endRecordedTimeStamp,
-                    executionEdges:[
-                        newStartExecutionEdge
-                    ]
-                })  
-            }else{
-                const doneState = TestState.DONE
-                this.logger.log(`Is final turn, changing test state to ${doneState}`)
-                TestStateMachine.change(this.test, doneState)
             }
 
-        } else {
-            const nextSequence = lastExecutionEdgeBySequence.edge.sequence + 1
-            const nextEdge = this.testTemplate.graph.edges.find(e => e.sequence === nextSequence)
+            // Update execution edges, adding the new
+            this.currentTurn.executionEdges.push(nextExecutionEdge)
+        }
+    }
 
-            const isLastNodeEqualsToNextNode = nextEdge.startNode.code === lastExecutionEdgeBySequence.endNode.node.code
+    private processEndOfTurn() {
+        this.logger.log(`End of turn`)
+        const isFinalTurn = this.currentTurn.number === this.test.numberOfTurns
 
-            if (isLastNodeEqualsToNextNode) {
-                this.logger.log(`Last node is equal to next node, creating new execution edge`)
-                const nextExecutionEdge: TestExecutionEdge = {
-                    edge: {
-                        sequence: nextEdge.sequence
-                    },
-                    startNode: {
-                        node: {
-                            code: nextEdge.startNode.code,
-                        },
-                        recordedTimeStamp: this.executionNode.recordedTimeStamp
-                    }
+        this.logger.log(`Is final turn? ${isFinalTurn}`)
+        if(isFinalTurn){
+            const doneState = TestState.DONE
+            this.logger.log(`Is final turn, changing test state to ${doneState}`)
+            TestStateMachine.change(this.test, doneState)
+            return
+        }
+
+        // Create new turn
+        const endRecordedTimeStamp = this.executionNode.recordedTimeStamp
+        this.currentTurn.endTimeStamp = endRecordedTimeStamp
+        const newTurn = this.currentTurn.number + 1
+
+        // Find first ege of graph
+        const firstEdgeOfGraph = this.testTemplate.graph.edges.sort((a,b) => a.sequence - b.sequence)[0]
+
+        if(!firstEdgeOfGraph)
+            throw new Error(`Can't found the first edge of the graph`)
+
+        const newStartExecutionEdge : TestExecutionEdge = {
+            edge: {
+                sequence: firstEdgeOfGraph.sequence
+            },
+            startNode: {
+                recordedTimeStamp: this.executionNode.recordedTimeStamp,
+                node: {
+                    code: firstEdgeOfGraph.startNode.code
                 }
-                this.currentTurn.executionEdges.push(nextExecutionEdge)
+            },
+            endNode: {
+                node: {
+                    code: firstEdgeOfGraph.endNode.code
+                }
             }
         }
 
+        this.test.testExecution.turns.push({
+            number: newTurn,
+            startTimeStamp: endRecordedTimeStamp,
+            executionEdges:[
+                newStartExecutionEdge
+            ]
+        })  
+      
+    }
+    
+    private checkCurrentTurn() {
+        this.logger.log(`Checking current turn`)
+
+        if(!this.currentTurn)
+            throw new Error(`Current turn can't be undefined`)
+
+        const turnDontHaveValidNumber = this.currentTurn.number < 0
+        const turnDontHaveExecutionEdges = !this.currentTurn.executionEdges || this.currentTurn.executionEdges.length <= 0;
+        if(turnDontHaveValidNumber || turnDontHaveExecutionEdges){
+            throw new Error(`Current turn is not valid`)
+        }
+
+    }
+
+    private findEdgeOnTemplateBySequence(edgeSequence: number){
+        return this.testTemplate.graph.edges.find(e => e.sequence === edgeSequence)
     }
 
 }

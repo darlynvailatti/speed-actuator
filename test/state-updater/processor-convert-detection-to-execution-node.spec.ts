@@ -37,7 +37,7 @@ describe('Convert Message Detection to Execution Node', () => {
             sensorDetectionMessage,
             testTemplate
         )
-        const convertedExecutionNode : TestExecutionNode = processorConvert.execute()
+        const convertedExecutionNode : TestExecutionNode = processorConvert.execute();
         expect(convertedExecutionNode.node.code).toEqual(nodeOne.code)
         expect(convertedExecutionNode.recordedTimeStamp).not.toBeNull()
 

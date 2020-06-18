@@ -42,11 +42,10 @@ export class TestViewService {
 
         const turns: TurnDTO[] = testExecution.turns.map(turn => {
 
-            const edges: EdgeDTO[] = []
+            let edges: EdgeDTO[] = []
             turn.executionEdges.map(executionEdge => {
 
                 const edgeFromTemplate = testTemplate.graph.edges.find(e => e.sequence === executionEdge.edge.sequence)
-
 
                 let velocity = 0
                 let totalTime = 0
@@ -91,8 +90,8 @@ export class TestViewService {
                 }
                 edges.push(edgeDTO)
             })
-
-
+            
+            edges = edges.sort((x,y) => x.sequence - y.sequence);
 
             return {
                 number: turn.number,

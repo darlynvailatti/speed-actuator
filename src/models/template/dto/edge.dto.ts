@@ -3,6 +3,8 @@ import { Edge } from "../edge";
 export interface EdgeDTO {
     description: string,
     distance: number,
+    baseTime?: number,
+    stopWatch?: boolean,
     sequence?: number,
     startNode: string
     endNode: string
@@ -15,6 +17,8 @@ export class EdgeDTOConverter {
             description: edgeDTO.description,
             sequence: edgeDTO.sequence,
             distance: edgeDTO.distance,
+            baseTime: edgeDTO.baseTime,
+            stopWatch: edgeDTO.stopWatch,
             startNode: {
                 code: edgeDTO.startNode
             },

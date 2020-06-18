@@ -3,6 +3,8 @@ export interface Edge {
     sequence?: number,
     description: string,
     distance: number,
+    baseTime?: number, 
+    stopWatch?: boolean,
     startNode: {
         code: string
     },

@@ -17,29 +17,16 @@ export class StateUpdateListenerService implements OnApplicationBootstrap {
         this.subscribeAndRegisterMessageListener();
     }
 
-    subscribeAndRegisterMessageListener(): void {
-        try {
-            this.logger.log(`subscribing and registering ${Constants.TEST_UPDATE_STATE_CHANELL}...`);
-        
-            const redisSubClient = this.redisDatabase.getSubscriberClient()
-
-            redisSubClient.subscribe(Constants.TEST_UPDATE_STATE_CHANELL);
-            redisSubClient.on("message", (channel, message) => {
-                if (channel === Constants.TEST_UPDATE_STATE_CHANELL)
-                    this.testUpdateStateListener(message);
-            })
-        } catch (error) {
-            const formattedLog = `Error on subscribe and register on channel ${Constants.TEST_UPDATE_STATE_CHANELL} listener: ${error}`;
-            this.logger.error(formattedLog, error);
-            throw new InternalServerErrorException(formattedLog)
-        }
+    private subscribeAndRegisterMessageListener(): void {
+       
+        const channel = Constants.TEST_UPDATE_STATE_CHANNEL;
+        const callBack = this.handle.bind(this)
+        this.redisDatabase.subscribeOnChannelAndRegisterCallback(channel, callBack)
+         
     }
 
-    testUpdateStateListener(message): void {
+    private handle(message: string): void {
         this.logger.log(`receive message: ${message}`);
-
-        // ... do a lot of things
-
         this.executionStateWS.publishEventOnTestViewChannel(JSON.stringify(message))
     }
 

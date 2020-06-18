@@ -14,6 +14,8 @@ export const testTemplateSchema = new mongoose.Schema({
             description: String,
             sequence: Number,
             distance: Number,
+            baseTime: Number,
+            stopWatch: Boolean,
             startNode: {
                 code: String
             },

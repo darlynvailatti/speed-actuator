@@ -167,7 +167,7 @@ export class StateUpdaterService {
         this.logger.log(`Publishing in update state channel...`)
         const testViewDTO = await this.testeViewService.convertTestToView(this.test)
         const redisPubClient = this.redisDatabase.getPublisherClient()
-        redisPubClient.publish(Constants.TEST_UPDATE_STATE_CHANELL, JSON.stringify(testViewDTO));
+        redisPubClient.publish(Constants.TEST_UPDATE_STATE_CHANNEL, JSON.stringify(testViewDTO));
     }
 
 }

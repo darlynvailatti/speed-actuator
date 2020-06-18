@@ -31,6 +31,8 @@ export class TestTemplateFullDTOConverter {
                 sequence: e.sequence,
                 description: e.description,
                 distance: e.distance,
+                baseTime: e.baseTime,
+                stopWatch: e.stopWatch,
                 startNode: e.startNode.code,
                 endNode: e.endNode.code,
             })

@@ -19,21 +19,16 @@ export class DetectionListenerService implements OnApplicationBootstrap {
   }
 
   private subscribeAndRegisterMessageListener() {
-    try {
-      this.logger.log(`subscribing and registering on ${Constants.SENSOR_DETECTION_BROKER_CHANNEL}...`);
+    const channel = Constants.SENSOR_DETECTION_BROKER_CHANNEL;
+    const callBack = this.handle.bind(this)
+    this.redisDatabase.subscribeOnChannelAndRegisterCallback(channel, callBack)
+  }
 
-      const redisSubClient = this.redisDatabase.getSubscriberClient()
-    
-      redisSubClient.subscribe(Constants.SENSOR_DETECTION_BROKER_CHANNEL);
-      redisSubClient.on("message", (channel, message) => {
-        if(channel === Constants.SENSOR_DETECTION_BROKER_CHANNEL)
-          this.testStateUpdaterService.processDetection(message);
-      })
-    } catch (error) {
-      const formattedLog = `Error on subscribe and register message sensor detection listener: ${error}`;
-      this.logger.error(formattedLog, error);
-      throw new InternalServerErrorException(formattedLog) 
-    }
+  private handle(message: string){
+    if(!message && message.length <= 0)
+      return;
+      
+    this.testStateUpdaterService.processDetection(message);
   }
 
  
