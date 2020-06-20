@@ -50,7 +50,7 @@ export class ProcessorStopWatcher {
             this.logger.log(`time elapsed: ${elapsedTime}`);
 
             if(elapsedTime > baseTime){
-                this.logger.log(`Calling stowatch timeout callback...`)
+                this.logger.log(`Calling stopwatch timeout callback...`)
                 this.timeoutStopWatchCallBack()
                 return;
             }
