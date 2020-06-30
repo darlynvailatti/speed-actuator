@@ -42,8 +42,10 @@ export class ProcessorBeginOfTestExecution {
             throw new Error(`First Edge of Graph don't have start node code`)
 
         const isMatchExpectedNode = startNodeOfFirstEdgeTemplate.code === this.executionNode.node.code
-        if (!isMatchExpectedNode)
-            throw new Error(`Node ${this.executionNode.node.code} It's not expected Node: ${startNodeOfFirstEdgeTemplate.code}`)
+        if (!isMatchExpectedNode){
+            this.logger.log(`Node ${this.executionNode.node.code} It's not expected Node: ${startNodeOfFirstEdgeTemplate.code}`)
+            return;
+        }
 
         // Create new TestExecutionEdge
         const executionEdge: TestExecutionEdge = {

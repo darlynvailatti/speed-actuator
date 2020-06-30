@@ -46,12 +46,11 @@ export class TestTemplateService {
     }
 
 
-    async update(updateDTO: UpdateTestTemplateDTO): Promise<TestTemplateFullDTO> {
+    async update(updateDTO: UpdateTestTemplateDTO): Promise<any> {
         
         /*
             1. If any test execution already did, then can't update template
-            2. Validate graph
-
+            2. Validate the graph
          */
 
         const code = updateDTO.code
@@ -66,9 +65,13 @@ export class TestTemplateService {
         const graphModel : Graph = GraphDTOConverter.convertToModel(updateDTO.graph)
         testTemplate.graph = graphModel
 
-        this.testTemplateValidatorService.validate({
+        const validation = await this.testTemplateValidatorService.validate({
             testTemplate: testTemplate
         })
+
+        if(!validation.isValid){
+            throw new InternalServerErrorException(validation.causeIfIsNotValid)
+        }
 
         const updatedTest = await this.testTemplateRepository.update(testTemplate)
         return TestTemplateFullDTOConverter.convertToDTO(updatedTest)

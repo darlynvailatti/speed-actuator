@@ -11,6 +11,10 @@ export class TestViewController {
     async get(@Param('testCode') testCode: string): Promise<TestViewDTO> {
         return await this.testViewService.getTestView(testCode)
     }
+    @Get('/all/execution')
+    async getAllInExecution(){
+        return await this.testViewService.getAllInExecution()
+    }
 
 
 }

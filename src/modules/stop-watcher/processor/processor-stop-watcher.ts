@@ -1,13 +1,11 @@
 import { Logger } from "@nestjs/common";
 import { EnsureThat } from "src/common/validate";
+import { StopwatchTest } from "../stop-watcher-gateway.service";
 
 export interface StopWatcherRequestToProcess {
     timeoutCallback: any,
     isDoneCallback: any,
-    baseTime: number,
-    startedTime: number,
-    edgeSequence: number,
-    turnNumber: number,
+    stopwatchTest: StopwatchTest
 }
 
 export class ProcessorStopWatcher {
@@ -16,36 +14,30 @@ export class ProcessorStopWatcher {
 
     private timeoutStopWatchCallBack: any;
     private isDoneFunction: any;
-    private baseTime: number;
-    private startedTime: number;
-    private edgeSequence: number;
-    private turnNumber: number;
+    private stopwatchTest: StopwatchTest;
 
     constructor(
         request: StopWatcherRequestToProcess){
         this.timeoutStopWatchCallBack = request.timeoutCallback;
         this.isDoneFunction = request.isDoneCallback;
-        this.baseTime = request.baseTime;
-        this.startedTime = request.startedTime;
-        this.edgeSequence = request.edgeSequence;
-        this.turnNumber = request.turnNumber;
+        this.stopwatchTest = request.stopwatchTest
     }
 
     async execute(){
-        EnsureThat.isNotNull(this.baseTime, 'Base time of edge')
-        const stopWatchProcessor = this.stopWatchProcessor(this.baseTime, this.startedTime)
+        EnsureThat.isNotNull(this.stopwatchTest.baseTime, 'Base time of edge')
+        const stopWatchProcessor = this.stopWatchProcessor(this.stopwatchTest.baseTime, this.stopwatchTest.lastTimeStamp)
         this.stopWatchAsyncProxyWrapper(stopWatchProcessor)
     }
 
     private * stopWatchProcessor(baseTime: number, startTimeStamp: number) {
        
-       
-        this.logger.log(`Init while`)
         let elapsedTime = Date.now() - startTimeStamp;
 
         const processingFor = {
-            edgeSequence: this.edgeSequence,
-            turnNumber: this.turnNumber
+            testCode: this.stopwatchTest.testCode,
+            edgeSequence: this.stopwatchTest.edgeSequence,
+            turnNumber: this.stopwatchTest.turnNumber,
+            lastTimeStamp: this.stopwatchTest.lastTimeStamp
         }
 
         while (true) {
@@ -59,7 +51,7 @@ export class ProcessorStopWatcher {
 
             if(elapsedTime > baseTime){
                 this.logger.log(`Calling stopwatch timeout callback...`)
-                this.timeoutStopWatchCallBack()
+                this.timeoutStopWatchCallBack(this.stopwatchTest)
                 return;
             }
             yield false

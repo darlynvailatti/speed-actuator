@@ -50,6 +50,7 @@ export class TestService {
         return {
             code: createdTest.code,
             description: createdTest.description,
+            state: createdTest.state,
             testTemplate: {
                 code: createdTest.template.code
             }
@@ -59,7 +60,8 @@ export class TestService {
 
     async changeToReady(testCode: string) {
 
-        const foundReadyTest = await this.testRepositoryService.findReadyOrStarted()
+        const tests = await this.testRepositoryService.findReadyOrStarted()
+        const foundReadyTest = tests.filter(t => t.code === testCode)[0]
 
         if(foundReadyTest && foundReadyTest.code != testCode)
             throw new Error(`Another test (${foundReadyTest.code}) is already ready to start`)

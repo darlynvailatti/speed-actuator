@@ -40,8 +40,10 @@ export class ProcessorMidleOfTurn {
         const expectedNodeCode = edgeTemplate.endNode.code
 
         const isMatchExpectedNode = expectedNodeCode === this.executionNode.node.code
-        if (!isMatchExpectedNode)
-            throw new Error(`Node ${this.executionNode.node.code} don't match the expected Node ${expectedNodeCode}`)
+        if (!isMatchExpectedNode){
+            this.logger.log(`Node ${this.executionNode.node.code} don't match the expected Node ${expectedNodeCode}`)
+            return;
+        }
 
         this.executionEdge.endNode = this.executionNode
 

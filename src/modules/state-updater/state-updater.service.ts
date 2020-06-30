@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Scope } from "@nestjs/common";
 import { TestRepositoryService } from "../database/test-repository.service";
 import { TestTemplateRepository } from "../database/test-template-repository.service";
 import { Test, TestState } from "src/models/execution/test";
@@ -19,6 +19,7 @@ export class StateUpdaterService {
 
     private readonly logger = new Logger(StateUpdaterService.name)
 
+    private testsInExecution: Array<Test>
     private test: Test
     private testTemplate: TestTemplate
     private sensorDetectionMessage: SensorDetectionMessage
@@ -42,24 +43,37 @@ export class StateUpdaterService {
             this.receivedDetectionMessage = message
             this.logger.log(`Process detection message: ${message}`)
 
-            await this.findReadyTestOrThrowError()
-            this.createNewExecutionTestIfNotExist()
-            await this.findTestTemplateFor()
-            this.parseDetectionMessage()
-            await this.convertDetectionToExecutionNode()
-            await this.getCurrentTurnOrCreateOne()
+            await this.findTestsInExecution()
 
-            const isBeginOfTurn = this.test.state === TestState.READY
+            for(const test of this.testsInExecution){
 
-            if (isBeginOfTurn) {
-                await this.processBeginOfTestExecution()
-            } else {
-                await this.processMidleOrEndOfTestExecution()
+                this.logger.log(`Start Processing of test: ${test.code}`)
+
+                this.test = test
+                this.createNewExecutionTestIfNotExist()
+                await this.findTestTemplateFor()
+                this.parseDetectionMessage()
+                await this.convertDetectionToExecutionNode()
+
+                if(!this.executionNode){
+                    this.logger.log(`Detection message don't match graph of test code ${this.test.code}`)
+                    continue;
+                }
+
+                await this.getCurrentTurnOrCreateOne()
+
+                const isBeginOfTurn = this.test.state === TestState.READY
+
+                if (isBeginOfTurn) {
+                    await this.processBeginOfTestExecution()
+                } else {
+                    await this.processMidleOrEndOfTestExecution()
+                }
+
+                this.setCurrentTurnOnTestExecution()
+                this.testRespositoryService.update(this.test)
+                this.publish()
             }
-
-            this.setCurrentTurnOnTestExecution()
-            this.testRespositoryService.update(this.test)
-            this.publish()
 
         } catch (error) {
             const formattedMessageError = `Process detection fail: ${error.message}`
@@ -70,6 +84,7 @@ export class StateUpdaterService {
 
     private initilizeAttributes() {
 
+        this.testsInExecution = []
         this.test = null
         this.testTemplate = null
         this.sensorDetectionMessage = null
@@ -97,14 +112,10 @@ export class StateUpdaterService {
         }
     }
 
-    private async findReadyTestOrThrowError() {
-        this.logger.log(`Finding ready test...`)
-        const readyTest = await this.testRespositoryService.findReadyOrStarted()
-        if (!readyTest)
-            throw new Error(`None Test ready to execution`)
-
-        this.logger.log(`Found ready Test ${readyTest}`)
-        this.test = readyTest
+    private async findTestsInExecution() {
+        this.logger.log(`Finding ready or started tests...`)
+        this.testsInExecution = await this.testRespositoryService.findReadyOrStarted()
+        this.logger.log(`Found Test's in execution: ${this.testsInExecution}`)
     }
 
     private async findTestTemplateFor() {

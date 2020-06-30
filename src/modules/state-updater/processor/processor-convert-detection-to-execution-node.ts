@@ -28,8 +28,10 @@ export default class ProcessorConvertDetectionToExecutionNode {
         const graph = this.testTemplate.graph
         const node = graph.nodes.find(n => n.sensor.code === sensorCode)
 
-        if (!node)
-            throw Error(`The graph don't have Node with sensor code ${sensorCode}`)
+        if (!node){
+            this.logger.log(`The graph don't have Node with sensor code ${sensorCode}`)
+            return
+        }
 
         this.logger.log(`Node: ${node.code}`)
 

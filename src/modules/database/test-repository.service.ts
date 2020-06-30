@@ -26,16 +26,18 @@ export class TestRepositoryService {
         return testDocument.toObject()
     }
 
-    async findReadyOrStarted() : Promise<Test> {
+    async findReadyOrStarted() : Promise<Array<Test>> {
         const filter = { 
             $or: [ 
                     { state: TestState.READY },
                     { state: TestState.STARTED }
                 ] 
             }
-        const testDocument = await this.testModel.findOne(filter)
-        if(!testDocument) return null
-        return testDocument.toObject()
+
+        const foundTests = []
+        const testDocuments = await this.testModel.find(filter)
+        testDocuments.map(t => t.toObject()).forEach(t => foundTests.push(t))
+        return foundTests
     }
 
     async createNewTest(newTest: Test): Promise<Test> {

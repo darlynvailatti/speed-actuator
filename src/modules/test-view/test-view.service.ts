@@ -3,11 +3,12 @@ import { TestRepositoryService } from '../database/test-repository.service';
 import { TestViewDTO, TurnDTO, EdgeDTO, TestViewDTOBuilder } from 'src/models/view/dto/test-view.dto';
 import { TestTemplateRepository } from '../database/test-template-repository.service';
 import { Test } from 'src/models/execution/test';
+import { TestDTO } from 'src/models/execution/dto/test.dto';
 
 
 @Injectable()
 export class TestViewService {
-
+    
     constructor(
         readonly testRepositoryService: TestRepositoryService,
         readonly testTemplateRepositoryService: TestTemplateRepository
@@ -108,6 +109,25 @@ export class TestViewService {
 
         testViewDTO.turns = turns
         return testViewDTO;
+    }
+
+    async getAllInExecution() : Promise<Array<TestDTO>>{
+        const tests = await this.testRepositoryService.findReadyOrStarted()
+        if(!tests){
+            return []
+        }
+
+        const response = []
+        for(const test of tests){
+            const dto : TestDTO = {
+                code: test.code,
+                description: test.description,
+                state: test.state,
+                testTemplate: test.template
+            }
+            response.push(dto)
+        }
+        return response
     }
 
 }
