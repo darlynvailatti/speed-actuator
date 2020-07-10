@@ -3,11 +3,20 @@ import { EdgeDTO, EdgeDTOConverter } from "./edge.dto";
 import { Graph } from "../graph";
 import { Node } from "../node";
 import { Edge } from "../edge";
+import { ApiProperty } from "@nestjs/swagger";
 
-export interface GraphDTO {
-    code: string,
-    description: string,
-    edges?: EdgeDTO[],
+export class GraphDTO {
+
+    @ApiProperty()
+    code: string
+
+    @ApiProperty()
+    description: string
+
+    @ApiProperty({type: [EdgeDTO]})
+    edges?: EdgeDTO[]
+
+    @ApiProperty({type: [NodeDTO]})
     nodes?: NodeDTO[]
 }
 

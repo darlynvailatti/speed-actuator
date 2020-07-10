@@ -2,13 +2,21 @@ import { GraphDTO } from "./graph.dto";
 import { TestTemplate } from "../test.template";
 import { NodeDTO } from "./node.dto";
 import { EdgeDTO } from "./edge.dto";
+import { ApiProperty } from "@nestjs/swagger";
 
-export interface TestTemplateFullDTO {
+export class TestTemplateFullDTO {
 
-    code: string,
-    description: string,
-    numberOfTurns: number,
-    graph?: GraphDTO,
+    @ApiProperty()
+    code: string
+
+    @ApiProperty()
+    description: string
+
+    @ApiProperty()
+    numberOfTurns: number
+
+    @ApiProperty()
+    graph?: GraphDTO
 }
 
 export class TestTemplateFullDTOConverter {

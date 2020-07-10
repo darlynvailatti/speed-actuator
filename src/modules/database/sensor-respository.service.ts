@@ -14,6 +14,6 @@ export class SensorRepositoryService {
 
     async findAll(): Promise<SensorDocument[]> {
         return this.sensorModel.find().exec();
-    }
+    } 
 
 }

@@ -1,12 +1,25 @@
 import { Node } from "../node";
+import { ApiProperty } from "@nestjs/swagger";
 
-export interface NodeDTO {
-    code: string,
-    sensor: {
-        code: string,
-        description?: string
-    }
+
+export class NodeSensorDTO {
+    
+    @ApiProperty()
+    code: string
+
+    @ApiProperty()
+    description?: string
 }
+
+export class NodeDTO {
+
+    @ApiProperty()
+    code: string
+
+    @ApiProperty()
+    sensor: NodeSensorDTO
+}
+
 
 export class NodeDTOConverter {
 

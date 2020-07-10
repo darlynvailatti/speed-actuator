@@ -1,8 +1,17 @@
 import { GraphDTO } from "./graph.dto";
+import { ApiProperty } from "@nestjs/swagger";
 
-export interface UpdateTestTemplateDTO {
+export class UpdateTestTemplateDTO {
+
+    @ApiProperty()
     code: string
-    description: string,
-    numberOfTurns: number,
-    graph: GraphDTO,
+
+    @ApiProperty()
+    description: string
+
+    @ApiProperty()
+    numberOfTurns: number
+
+    @ApiProperty()
+    graph: GraphDTO
 }

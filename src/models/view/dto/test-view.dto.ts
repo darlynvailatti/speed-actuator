@@ -1,43 +1,47 @@
-export interface TestViewDTO {
-    code: string,
-    description: string,
-    state: string,
-    totalTime?: number,
-    numberOfTurns: number,
-    turns?: TurnDTO[],
-    testCompare?: TestViewDTO
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+
+export class NodeDTO {
+    @ApiProperty() code: string
+    @ApiPropertyOptional() description?: string
+    @ApiProperty() recordedTime: number
+    @ApiPropertyOptional() nodeToCompare?: NodeDTO
 }
 
-export interface TurnDTO {
-    number: number,
-    startTimeStamp: string,
-    endTimeStamp: string,
-    recordedStartTime: string,
-    recordedEndTime: string,
-    totalTime: number,
-    averageTime: number,
-    edges: EdgeDTO[],
+export class EdgeDTO {
+    @ApiProperty() sequence: number
+    @ApiProperty() description: string
+    @ApiProperty() velocity: number
+    @ApiProperty() totalTime: number
+    @ApiProperty() startTimeStamp: string
+    @ApiProperty() endTimeStamp: string
+    @ApiProperty() distance: number
+    @ApiProperty() startNode: NodeDTO
+    @ApiProperty() endNode: NodeDTO
+    @ApiPropertyOptional() edgeToCompare?: EdgeDTO
 }
 
-export interface EdgeDTO {
-    sequence: number,
-    description: string,
-    velocity: number,
-    totalTime: number,
-    startTimeStamp: string,
-    endTimeStamp: string,
-    distance: number,
-    startNode: NodeDTO,
-    endNode: NodeDTO,
-    edgeToCompare?: EdgeDTO
+export class TurnDTO {
+    @ApiProperty() number: number
+    @ApiProperty() startTimeStamp: string
+    @ApiProperty() endTimeStamp: string
+    @ApiProperty() recordedStartTime: string
+    @ApiProperty() recordedEndTime: string
+    @ApiProperty() totalTime: number
+    @ApiProperty() averageTime: number
+    @ApiProperty({type: [EdgeDTO]}) edges: EdgeDTO[]
 }
 
-export interface NodeDTO {
-    code: string,
-    description?: string,
-    recordedTime: number,
-    nodeToCompare?: NodeDTO
+export class TestViewDTO {
+    @ApiProperty() code: string
+    @ApiProperty() description: string
+    @ApiProperty() templateCode: string
+    @ApiProperty() state: string
+    @ApiPropertyOptional() totalTime?: number
+    @ApiProperty() numberOfTurns: number
+    @ApiPropertyOptional({type: [TurnDTO]}) turns?: TurnDTO[]
+    @ApiProperty() testCompare?: TestViewDTO
 }
+
 
 export class TestViewDTOBuilder {
 
@@ -46,12 +50,14 @@ export class TestViewDTOBuilder {
         description: string,
         state: string,
         numberOfTurns: number,
+        templateCode: string
     ) : TestViewDTO {
         return {
             code: code,
             description: description,
             state: state,
             numberOfTurns: numberOfTurns,
+            templateCode: templateCode
         }
     }
 

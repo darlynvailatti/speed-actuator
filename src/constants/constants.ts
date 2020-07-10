@@ -14,3 +14,10 @@ export enum Constants{
 
 
 }
+
+export enum ConstantsApiTags {
+    VIEW_API_TAG = "view",
+    EXECUTION_API_TAG = "execution",
+    DETECTION_API_TAG = "detection",
+    LAB_API_TAG = "laboratory"
+}

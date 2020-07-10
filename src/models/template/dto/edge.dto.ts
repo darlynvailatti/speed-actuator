@@ -1,12 +1,27 @@
 import { Edge } from "../edge";
+import { ApiProperty } from "@nestjs/swagger";
 
-export interface EdgeDTO {
-    description: string,
-    distance: number,
-    baseTime?: number,
-    stopWatch?: boolean,
-    sequence?: number,
+export class EdgeDTO {
+    
+    @ApiProperty()
+    description: string
+
+    @ApiProperty()
+    distance: number
+
+    @ApiProperty()
+    baseTime?: number
+
+    @ApiProperty()
+    stopWatch?: boolean
+
+    @ApiProperty()
+    sequence?: number
+
+    @ApiProperty()
     startNode: string
+
+    @ApiProperty()
     endNode: string
 }
 

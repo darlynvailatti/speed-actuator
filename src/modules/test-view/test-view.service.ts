@@ -29,12 +29,12 @@ export class TestViewService {
 
 
         const testExecution = test.testExecution
-
         const testViewDTO = TestViewDTOBuilder.build(
             test.code,
             test.description,
             test.state,
-            test.numberOfTurns
+            test.numberOfTurns,
+            test.template.code
         )
 
         const testTemplate = await this.testTemplateRepositoryService.findOne(test.template.code)

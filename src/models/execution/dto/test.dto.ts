@@ -1,10 +1,23 @@
-export interface TestDTO {
+import { ApiProperty } from "@nestjs/swagger"
 
-    code: string,
-    description: string,
-    state: string,
-    testTemplate: {
-        code: string
-    }
+export class TestTemplateDTO {
 
+    @ApiProperty()
+    code: string
 }
+
+export class TestDTO {
+
+    @ApiProperty()
+    code: string
+
+    @ApiProperty()
+    description: string
+
+    @ApiProperty()
+    state: string
+
+    @ApiProperty()
+    testTemplate: TestTemplateDTO
+}
+

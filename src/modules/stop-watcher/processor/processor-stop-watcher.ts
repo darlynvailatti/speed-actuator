@@ -1,11 +1,12 @@
 import { Logger } from "@nestjs/common";
 import { EnsureThat } from "src/common/validate";
-import { StopwatchTest } from "../stop-watcher-gateway.service";
+import { StopwatchTestDTO } from "src/models/view/dto/stop-watcher.dto";
+
 
 export interface StopWatcherRequestToProcess {
     timeoutCallback: any,
     isDoneCallback: any,
-    stopwatchTest: StopwatchTest
+    stopwatchTest: StopwatchTestDTO
 }
 
 export class ProcessorStopWatcher {
@@ -14,7 +15,7 @@ export class ProcessorStopWatcher {
 
     private timeoutStopWatchCallBack: any;
     private isDoneFunction: any;
-    private stopwatchTest: StopwatchTest;
+    private stopwatchTest: StopwatchTestDTO;
 
     constructor(
         request: StopWatcherRequestToProcess){

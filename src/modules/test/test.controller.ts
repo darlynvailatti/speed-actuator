@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Param, HttpException, HttpStatus, Put } from '@nestjs/common';
 import { CreateNewTestDTO } from 'src/models/execution/dto/create-new-test.dto';
 import { TestDTO } from 'src/models/execution/dto/test.dto';
 import { TestService } from './test.service';
 import { TestState } from 'src/models/execution/test';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ConstantsApiTags } from 'src/constants/constants';
 
 @Controller('test')
 export class TestExecutionController {
@@ -13,12 +15,17 @@ export class TestExecutionController {
 
     }
 
+    @ApiOperation({summary: 'Create new test'})
+    @ApiResponse({status: 201, type: TestDTO})
+    @ApiTags(ConstantsApiTags.LAB_API_TAG)
     @Post()
     createNewTest(@Body() createNewTestDTO: CreateNewTestDTO): Promise<TestDTO> {
         return this.testService.createNewTest(createNewTestDTO)
     }
     
-    @Post('/:testCode/execution/cancel')
+    @ApiOperation({summary: 'Cancel test execution'})
+    @ApiTags(ConstantsApiTags.EXECUTION_API_TAG)
+    @Put('/:testCode/execution/cancel')
     async cancelTest(@Param('testCode') testCode: string) {
         try {
             await this.testService.changeState(testCode, TestState.CANCELLED)    
@@ -31,7 +38,9 @@ export class TestExecutionController {
         
     }
 
-    @Post('/:testCode/execution/ready')
+    @ApiOperation({summary: 'Put test in Ready'})
+    @ApiTags(ConstantsApiTags.EXECUTION_API_TAG)
+    @Put('/:testCode/execution/ready')
     async makeReady(@Param('testCode') testCode: string) {
         try {
             await this.testService.changeToReady(testCode)

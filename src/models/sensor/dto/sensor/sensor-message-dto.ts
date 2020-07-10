@@ -1,17 +1,22 @@
 import { SensorDetectionMessage, SensorMessageBuilder } from "src/models/sensor/sensor-message";
 import { SensorBuilder, Sensor } from "src/models/sensor/sensor";
 import { IsNotEmpty } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
 
 export abstract class SensorMessageDTO {
+
+    @ApiProperty()
     @IsNotEmpty()
     createdTimeStamp: string;
 
+    @ApiProperty()
     @IsNotEmpty()
     sensorCode: string;
 }
 
 export class SensorDetectionMessageDTO extends SensorMessageDTO{
 
+    @ApiProperty()
     @IsNotEmpty()
     timeStamp: string;
 }

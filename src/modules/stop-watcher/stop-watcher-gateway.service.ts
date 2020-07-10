@@ -10,6 +10,7 @@ import { TestTemplate } from "src/models/template/test.template";
 import { TestExecutionTurn, TestExecutionEdge } from "src/models/execution/test.execution";
 import { EnsureThat } from "src/common/validate";
 import { TestService } from "../test/test.service";
+import { StopwatchTestDTO } from "src/models/view/dto/stop-watcher.dto";
 
 @Injectable()
 export class StopWatcherGatewayService implements OnApplicationBootstrap {
@@ -19,7 +20,7 @@ export class StopWatcherGatewayService implements OnApplicationBootstrap {
     private test: Test;
 
     // Local cache
-    private executionStack: Array<StopwatchTest>;
+    private executionStack: Array<StopwatchTestDTO>;
 
     constructor(
         private readonly redisDatabase: RedisDatabase,
@@ -62,7 +63,7 @@ export class StopWatcherGatewayService implements OnApplicationBootstrap {
             return;
         }
 
-        const stopwatchTest : StopwatchTest = {
+        const stopwatchTest : StopwatchTestDTO = {
             testCode: this.test.code,
             edgeSequence: edge.sequence,
             turnNumber: lastTurn.number,
@@ -140,7 +141,7 @@ export class StopWatcherGatewayService implements OnApplicationBootstrap {
         return isDone;
     }
 
-    private timeoutCallback(event: {stopwatchTest: StopwatchTest}){
+    private timeoutCallback(event: {stopwatchTest: StopwatchTestDTO}){
 
         // search test on execution queue
         const testCode = event.stopwatchTest.testCode;
@@ -150,11 +151,11 @@ export class StopWatcherGatewayService implements OnApplicationBootstrap {
         this.removeStopwatchTest(event.stopwatchTest)
     }
 
-    private findOnStack(stopwatchTest: StopwatchTest) {
+    private findOnStack(stopwatchTest: StopwatchTestDTO) {
         return this.executionStack.find(s => s.testCode === stopwatchTest.testCode)
     }
 
-    private addOrUpdateStack(stopwatchTest: StopwatchTest) {
+    private addOrUpdateStack(stopwatchTest: StopwatchTestDTO) {
         let foundStopwatchTest = this.findOnStack(stopwatchTest)  
         if(foundStopwatchTest){
             this.logger.log(`Test already in stack, updating...`)
@@ -165,26 +166,16 @@ export class StopWatcherGatewayService implements OnApplicationBootstrap {
         }
     }
 
-    private removeStopwatchTest(stopwatchTest: StopwatchTest) {
+    private removeStopwatchTest(stopwatchTest: StopwatchTestDTO) {
         const testCode = stopwatchTest.testCode
         const allStopwatchTestsExceptOne = this.executionStack
             .filter(s => s.testCode != testCode)
         this.executionStack = allStopwatchTestsExceptOne
     }
 
-    public getAllInStack() {
+    public getAllInStack() : Array<StopwatchTestDTO>{
         return this.executionStack;
     }
-
-}
-
-export interface StopwatchTest {
-
-    testCode: string
-    turnNumber: number,
-    edgeSequence: number,
-    baseTime: number,
-    lastTimeStamp: number
 
 }
 
