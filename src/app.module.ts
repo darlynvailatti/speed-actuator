@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DetectionModule } from './modules/detection/detection.module';
-import { StateUpdaterModule } from './modules/state-updater/state-updater.module';
-import { StatePublisherModule } from './modules/state-publisher/state-publisher.module';
+import { StateUpdaterModule } from './modules/test-state-updater/test-state-updater.module';
+import { StatePublisherModule } from './modules/test-state-publisher/state-publisher.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { TestTemplateModule } from './modules/test-template/test-template.module';
 import { TestModule } from './modules/test/test.module';

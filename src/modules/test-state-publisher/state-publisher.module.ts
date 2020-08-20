@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { StateUpdateListenerService } from "./state-update-listener.service";
-import { ExecutionStateGateway } from "src/modules/state-publisher/execution-state-ws.service";
+import { ExecutionStateGateway } from "src/modules/test-state-publisher/execution-state-ws.service";
 import { DatabaseModule } from "../database/database.module";
 
 

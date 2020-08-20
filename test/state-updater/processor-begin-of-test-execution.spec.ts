@@ -1,6 +1,6 @@
 import { Test, TestState } from "src/models/execution/test"
 import { TestTemplate } from "src/models/template/test.template"
-import { ProcessorBeginOfTestExecution } from "src/modules/state-updater/processor/processor-begin-of-test-execution"
+import { ProcessorBeginOfTestExecution } from "src/modules/test-state-updater/processor/processor-begin-of-test-execution"
 import { TestExecutionNode, TestExecutionTurn } from "src/models/execution/test.execution"
 import { Edge } from "src/models/template/edge"
 import { Node } from "src/models/template/node"

@@ -1,7 +1,7 @@
-import { Injectable, InternalServerErrorException, OnApplicationBootstrap, Logger } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
 import { Constants } from 'src/constants/constants';
 import { RedisDatabase } from '../database/redis.service';
-import { StateUpdaterService as TestStateUpdaterService } from './state-updater.service';
+import { StateUpdaterService as TestStateUpdaterService } from './test-state-updater.service';
 
 
 @Injectable()

@@ -1,4 +1,4 @@
-import ProcessorConvertDetectionToExecutionNode from '../../src/modules/state-updater/processor/processor-convert-detection-to-execution-node';
+import ProcessorConvertDetectionToExecutionNode from '../../src/modules/test-state-updater/processor/processor-convert-detection-to-execution-node';
 import { TestTemplate } from 'src/models/template/test.template';
 import { SensorDetectionMessage } from 'src/models/sensor/sensor-message';
 import { TestExecutionNode } from 'src/models/execution/test.execution';

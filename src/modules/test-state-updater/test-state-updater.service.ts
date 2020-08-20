@@ -1,4 +1,4 @@
-import { Injectable, Logger, Scope } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { TestRepositoryService } from "../database/test-repository.service";
 import { TestTemplateRepository } from "../database/test-template-repository.service";
 import { Test, TestState } from "src/models/execution/test";

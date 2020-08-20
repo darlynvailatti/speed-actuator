@@ -1,5 +1,5 @@
 import { TestExecutionTurn } from "src/models/execution/test.execution"
-import { ProcessorMidleOfTurn } from "src/modules/state-updater/processor/processor-midle-or-end-of-test-execution"
+import { ProcessorMidleOfTurn } from "src/modules/test-state-updater/processor/processor-midle-or-end-of-test-execution"
 
 describe('Proccess midle or end of test execution', () => {
 
