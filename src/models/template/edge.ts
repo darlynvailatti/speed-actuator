@@ -1,15 +1,18 @@
-export interface Edge {
-    code?: string,
-    sequence?: number,
-    description: string,
-    distance: number,
-    baseTime?: number, 
-    stopWatch?: boolean,
-    startNode: {
-        code: string
-    },
-    endNode: {
-        code: string
-    }
-}
+import { ApiProperty } from '@nestjs/swagger';
 
+export class Edge {
+  @ApiProperty() code?: string;
+  @ApiProperty() sequence?: number;
+  @ApiProperty() description: string;
+  @ApiProperty() distance: number;
+  @ApiProperty() velocity?: number;
+  @ApiProperty() totalTime?: number;
+  @ApiProperty() startTimeStamp: string;
+  @ApiProperty() endTimeStamp: string;
+  @ApiProperty() startNode: {
+    code: string;
+  };
+  @ApiProperty() endNode: {
+    code: string;
+  };
+}

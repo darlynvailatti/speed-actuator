@@ -1,28 +1,20 @@
-import { Document } from "mongoose";
-import { TestExecution } from "./test.execution";
+import { TestExecution } from './test.execution';
+import { TestTemplate } from 'src/models/template/test.template';
+import { ApiProperty } from '@nestjs/swagger';
 
-export interface Test {
-    code?: string,
-    description: string,
-    numberOfTurns: number,
-    template: {
-        code: string
-    },
-    athlete: {
-        code: string
-    },
-    state: TestState,
-    testExecution?: TestExecution
+export class Test {
+  @ApiProperty() code?: string;
+  @ApiProperty() description: string;
+  @ApiProperty() numberOfTurns: number;
+  @ApiProperty() template: TestTemplate;
+  @ApiProperty() state: TestState;
+  @ApiProperty() testExecution?: TestExecution;
 }
 
 export enum TestState {
-    IDLE = 'IDLE',
-    READY = 'READY',
-    STARTED = 'STARTED',
-    DONE = 'DONE',
-    CANCELLED = 'CANCELLED'
-}
-
-export interface TestDocument extends Document, Test {
-    
+  IDLE = 'IDLE',
+  READY = 'READY',
+  STARTED = 'STARTED',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED',
 }

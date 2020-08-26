@@ -1,19 +1,20 @@
-import { Edge } from "./edge";
-import { Node } from "./node";
+import { Edge } from './edge';
+import { Node } from './node';
+import { ApiProperty } from '@nestjs/swagger';
+import { Stopwatch } from './stopwatch';
 
-export interface Graph {
-    code?: string,
-    description: string,
-    edges?: Edge[],
-    nodes?: Node[]
+export class Graph {
+  @ApiProperty() code?: string;
+  @ApiProperty() description: string;
+  @ApiProperty({ type: [Stopwatch] }) stopwatchers?: Array<Stopwatch>;
+  @ApiProperty({ type: [Edge] }) edges?: Edge[];
+  @ApiProperty({ type: [Node] }) nodes?: Node[];
 }
 
 export class GraphBuilder {
-
-    static build(description: string) : Graph {
-        return {
-            description: description
-        }
-    }
-
+  static build(description: string): Graph {
+    return {
+      description: description,
+    };
+  }
 }

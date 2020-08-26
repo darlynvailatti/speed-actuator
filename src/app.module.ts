@@ -6,7 +6,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { TestTemplateModule } from './modules/test-template/test-template.module';
 import { TestModule } from './modules/test/test.module';
 import { TestViewModule } from './modules/test-view/test-view.module';
-import { StopWatcherModule } from './modules/stop-watcher/stop-watcher.module';
+import { StopWatcherModule } from './modules/stopwatcher/stopwatcher.module';
 
 @Module({
   imports: [
@@ -17,9 +17,9 @@ import { StopWatcherModule } from './modules/stop-watcher/stop-watcher.module';
     TestTemplateModule,
     TestModule,
     TestViewModule,
-    StopWatcherModule
+    StopWatcherModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

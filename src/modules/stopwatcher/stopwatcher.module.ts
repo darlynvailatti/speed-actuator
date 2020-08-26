@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { StopWatcherGatewayService } from './stop-watcher-gateway.service';
+import { StopwatcherGatewayService } from './stopwatcher-gateway.service';
 import { DatabaseModule } from '../database/database.module';
 import { TestModule } from '../test/test.module';
-import { StopwatchController } from './stop-watcher.controller';
-
+import { StopwatchController } from './stopwatcher.controller';
 
 @Module({
   imports: [DatabaseModule, TestModule],
   controllers: [StopwatchController],
-  providers: [StopWatcherGatewayService],
+  providers: [StopwatcherGatewayService],
 })
 export class StopWatcherModule {}

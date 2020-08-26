@@ -1,34 +1,35 @@
+import { ApiProperty } from '@nestjs/swagger';
 
-export interface TestExecution {
-    totalTime?: number,
-    who: string,
-    when: Date
-    turns: TestExecutionTurn[]
+export class TestExecution {
+  @ApiProperty() totalTime?: number;
+  @ApiProperty() who: string;
+  @ApiProperty() when: Date;
+  @ApiProperty() turns: TestExecutionTurn[];
 }
 
-export interface TestExecutionTurn {
-    number: number,
-    startTimeStamp: string,
-    endTimeStamp?: string,
-    totalTime?: number,
-    averageTime?: number,
-    executionEdges?: TestExecutionEdge[]
+export class TestExecutionTurn {
+  @ApiProperty() number: number;
+  @ApiProperty() startTimeStamp: string;
+  @ApiProperty() endTimeStamp?: string;
+  @ApiProperty() totalTime?: number;
+  @ApiProperty() averageTime?: number;
+  @ApiProperty() executionEdges?: TestExecutionEdge[];
 }
 
-export interface TestExecutionEdge {
-    edge: {
-        sequence: number
-    },
-    velocity?: number,
-    totalTime?: number,
-    startNode: TestExecutionNode,
-    endNode?:TestExecutionNode
+export class TestExecutionNode {
+  @ApiProperty() node: {
+    code: string;
+  };
+  @ApiProperty() recordedTimeStamp?: string;
+  @ApiProperty() time?: number;
 }
 
-export interface TestExecutionNode {
-    node: {
-        code: string,
-    },
-    recordedTimeStamp?: string,
-    time?: number
+export class TestExecutionEdge {
+  @ApiProperty() edge: {
+    sequence: number;
+  };
+  @ApiProperty() velocity?: number;
+  @ApiProperty() totalTime?: number;
+  @ApiProperty() startNode: TestExecutionNode;
+  @ApiProperty() endNode?: TestExecutionNode;
 }

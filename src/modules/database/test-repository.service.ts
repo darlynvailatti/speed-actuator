@@ -1,69 +1,48 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { SequenceGeneratorService } from "./sequence-generator.service";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { TestDocument, Test, TestState } from "src/models/execution/test";
-
+import { Injectable, Logger } from '@nestjs/common';
+import { Test, TestState } from 'src/models/execution/test';
+import { RedisDatabase } from './redis.database';
 
 @Injectable()
 export class TestRepositoryService {
+  private readonly logger = new Logger(TestRepositoryService.name);
 
-    private readonly logger = new Logger(TestRepositoryService.name)
+  private readonly MODEL_NAME = 'test';
 
-    private readonly SEQUENCE_NAME = 'test'
+  constructor(private readonly redisDatabase: RedisDatabase) {}
 
-    constructor(
-        private readonly sequenceGeneratorService : SequenceGeneratorService,
-        @InjectModel('test') private readonly testModel: Model<TestDocument>
-    ) {}
+  async findOne(code: string): Promise<Test> {
+    const redisClient = this.redisDatabase.getRepositoryClient();
+    const testAsString = await redisClient.get(this.getKey(code));
+    const test: Test = JSON.parse(testAsString);
+    return test;
+  }
 
-    
-    async findOne(code: string) : Promise<Test> {
-        const filter = { code:  code }
-        const testDocument = await this.testModel.findOne(filter)
-        if(!testDocument)
-            return null
-        return testDocument.toObject()
+  async findReadyOrStarted(): Promise<Array<Test>> {
+    const client = this.redisDatabase.getRepositoryClient();
+    const tests: Array<string> = await client.keys(this.MODEL_NAME + '*');
+
+    if (!tests) return [];
+
+    const foundTests = [];
+    for (const testKey of tests) {
+      const test: Test = await JSON.parse(await client.get(testKey));
+      if (test.state === TestState.READY || test.state === TestState.STARTED) {
+        foundTests.push(test);
+      }
     }
+    return foundTests;
+  }
 
-    async findReadyOrStarted() : Promise<Array<Test>> {
-        const filter = { 
-            $or: [ 
-                    { state: TestState.READY },
-                    { state: TestState.STARTED }
-                ] 
-            }
+  async save(newTest: Test): Promise<boolean> {
+    const redisClient = this.redisDatabase.getRepositoryClient();
+    const testCode = newTest.code;
+    const key = this.getKey(testCode);
+    const testJson = JSON.stringify(newTest);
+    await redisClient.set(key, testJson);
+    return true;
+  }
 
-        const foundTests = []
-        const testDocuments = await this.testModel.find(filter)
-        testDocuments.map(t => t.toObject()).forEach(t => foundTests.push(t))
-        return foundTests
-    }
-
-    async createNewTest(newTest: Test): Promise<Test> {
-        const code = await (this.sequenceGeneratorService.getNextAndSave(this.SEQUENCE_NAME))
-        this.logger.log(`Creating new Test: ${JSON.stringify(newTest)}`)
-        newTest.code = code.toLocaleString()
-
-        const testDocument = await this.testModel.create(newTest)
-        if(!testDocument)
-            return null
-        return testDocument.toObject()
-    }
-
-    async update(test: Test) : Promise<Test> {
-        
-        const filter = { code: test.code }
-        const update = { 
-            description: test.description,
-            numberOfTurns: test.numberOfTurns,
-            state: test.state,
-            testExecution: test.testExecution
-        }
-        const testDocument = await this.testModel.findOneAndUpdate(filter, update)
-        if(!testDocument) return null
-
-        return testDocument.toObject()
-    }
-
+  private getKey(code: string): string {
+    return this.MODEL_NAME + ':' + code;
+  }
 }

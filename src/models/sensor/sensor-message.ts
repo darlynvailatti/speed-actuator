@@ -1,38 +1,36 @@
-import { Sensor } from "./sensor";
+import { Sensor } from './sensor';
 
-export interface SensorMessage {
-    createdTimeStamp: string,
-    sensor: Sensor
+export class SensorMessage {
+  createdTimeStamp: string;
+  sensor: Sensor;
 }
 
-export interface SensorDetectionMessage extends SensorMessage{
-    timeStamp: string;
+export class SensorDetectionMessage extends SensorMessage {
+  timeStamp: string;
 }
 
-export interface SensorStateChangeMessage extends SensorMessage {
-    state: SensorState,
+export class SensorStateChangeMessage extends SensorMessage {
+  state: SensorState;
 }
 
 export enum SensorState {
-    UNKNOW,
-    READY,
-    STAND_BY
+  UNKNOW,
+  READY,
+  STAND_BY,
 }
 
 export class SensorMessageBuilder {
+  static buildSensorMessageDetection(
+    createdTimeStamp: string,
+    sensor: Sensor,
+    timeStamp: string,
+  ): SensorDetectionMessage {
+    return {
+      createdTimeStamp: createdTimeStamp,
+      sensor: sensor,
+      timeStamp: timeStamp,
+    };
+  }
 
-    static buildSensorMessageDetection(
-        createdTimeStamp: string, 
-        sensor: Sensor,
-        timeStamp: string
-        ) : SensorDetectionMessage{
-        return {
-            createdTimeStamp: createdTimeStamp,
-            sensor: sensor,
-            timeStamp: timeStamp
-        }
-    }
-
-    static
-
+  static;
 }
