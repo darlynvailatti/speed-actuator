@@ -1,7 +1,6 @@
 import { OnApplicationBootstrap, Injectable, Logger } from '@nestjs/common';
 import { RedisDatabase } from '../database/redis.database';
 import { Constants } from 'src/constants/constants';
-import { TestRepositoryService } from '../database/test-repository.service';
 import { Test, TestState } from 'src/models/execution/test';
 import {
   StopwatchProcessorImplementation,
@@ -27,7 +26,6 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
 
   constructor(
     private readonly redisDatabase: RedisDatabase,
-    private readonly testRespositoryService: TestRepositoryService,
     private readonly testService: TestService,
   ) {
     this.logger.log('Bulding StopwatcherGatewayService');
