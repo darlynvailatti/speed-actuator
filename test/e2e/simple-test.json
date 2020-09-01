@@ -1,0 +1,52 @@
+{
+  "test": {
+    "code": "1",
+    "description": "test description",
+    "numberOfTurns": 1,
+    "state": "DONE",
+    "template": {
+      "code": "1",
+      "description": "template 1",
+      "graph": {
+        "edges": [
+          {
+            "sequence": 1,
+            "description": "sprint - A->B",
+            "distance": 10,
+            "startNode": {
+              "code": "A1"
+            },
+            "endNode": {
+              "code": "A2"
+            }
+          },
+          {
+            "sequence": 2,
+            "description": "sprint - B->A",
+            "distance": 10,
+            "startNode": {
+              "code": "A2"
+            },
+            "endNode": {
+              "code": "A1"
+            }
+          }
+        ],
+        "nodes": [
+          {
+            "code": "A1",
+            "sensor": {
+              "code": "001"
+            }
+          },
+          {
+            "code": "A2",
+            "sensor": {
+              "code": "002"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
