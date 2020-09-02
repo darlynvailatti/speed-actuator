@@ -7,8 +7,8 @@ export class Edge {
   @ApiProperty() distance: number;
   @ApiProperty() velocity?: number;
   @ApiProperty() totalTime?: number;
-  @ApiProperty() startTimeStamp: string;
-  @ApiProperty() endTimeStamp: string;
+  @ApiProperty() startTimeStamp?: string;
+  @ApiProperty() endTimeStamp?: string;
   @ApiProperty() startNode: {
     code: string;
   };

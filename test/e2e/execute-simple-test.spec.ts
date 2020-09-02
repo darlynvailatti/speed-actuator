@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+import { TestState } from 'src/models/execution/test';
 
 describe('execute-simple-test', () => {
   let app: INestApplication;
@@ -118,7 +119,7 @@ describe('execute-simple-test', () => {
         // check if test are STARTED and have first Edge
         getTestView(testCode).then(res => {
           expect(res.status).toEqual(200);
-          expect(res.body.state).toEqual('STARTED');
+          expect(res.body.state).toEqual(TestState.STARTED);
           expect(res.body.turns).toHaveLength(1);
 
           const turns = res.body.turns;
@@ -148,7 +149,7 @@ describe('execute-simple-test', () => {
         // check if test have two edges
         await getTestView(testCode).then(res => {
           expect(res.status).toEqual(200);
-          expect(res.body.state).toEqual('STARTED');
+          expect(res.body.state).toEqual(TestState.STARTED);
           expect(res.body.turns).toHaveLength(1);
 
           const turns = res.body.turns;

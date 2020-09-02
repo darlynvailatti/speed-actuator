@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TestTemplate {
   @ApiProperty() code?: string;
-  @ApiProperty() description: string;
+  @ApiProperty() description?: string;
   @ApiProperty() numberOfTurns?: number;
   @ApiProperty({ type: Graph }) graph?: Graph;
 }
