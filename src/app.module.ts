@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { DetectionModule } from './modules/detection/detection.module';
 import { StateUpdaterModule } from './modules/test-state-updater/test-state-updater.module';
 import { StatePublisherModule } from './modules/test-state-publisher/state-publisher.module';
@@ -10,6 +11,9 @@ import { StopWatcherModule } from './modules/stopwatcher/stopwatcher.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     DatabaseModule,
     DetectionModule,
     StateUpdaterModule,

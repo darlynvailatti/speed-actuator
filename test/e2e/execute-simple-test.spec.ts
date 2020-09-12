@@ -79,12 +79,10 @@ describe('execute-simple-test', () => {
 
     const checkIfTestStateEqualsToReady = async () => {
       // get test-view with state equal READY
-      await request(httpServer)
-        .get(`/test-view/${testCode}`)
-        .then(res => {
-          expect(res.status).toEqual(200);
-          expect(res.body.state).toEqual('READY');
-        });
+      await getTestView(testCode).then(res => {
+        expect(res.status).toEqual(200);
+        expect(res.body.state).toEqual('READY');
+      });
     };
 
     const putOneDetection = async ({ sensorCode, timeStamp }) => {
@@ -117,7 +115,7 @@ describe('execute-simple-test', () => {
       })
       .then(async () => {
         // check if test are STARTED and have first Edge
-        getTestView(testCode).then(res => {
+        await getTestView(testCode).then(res => {
           expect(res.status).toEqual(200);
           expect(res.body.state).toEqual(TestState.STARTED);
           expect(res.body.turns).toHaveLength(1);
@@ -183,27 +181,25 @@ describe('execute-simple-test', () => {
       })
       .then(async () => {
         // check if test is DONE
-        await request(httpServer)
-          .get(`/test-view/${testCode}`)
-          .then(res => {
-            expect(res.status).toEqual(200);
-            expect(res.body.state).toEqual('DONE');
-            expect(res.body.turns).toHaveLength(1);
+        await getTestView(testCode).then(res => {
+          expect(res.status).toEqual(200);
+          expect(res.body.state).toEqual('DONE');
+          expect(res.body.turns).toHaveLength(1);
 
-            const turns = res.body.turns;
-            const firstTurn = turns[0];
+          const turns = res.body.turns;
+          const firstTurn = turns[0];
 
-            expect(firstTurn).toHaveProperty('edges');
-            expect(firstTurn.edges).toHaveLength(2);
+          expect(firstTurn).toHaveProperty('edges');
+          expect(firstTurn.edges).toHaveLength(2);
 
-            const edges = firstTurn.edges;
-            const secondEdge = edges[1];
+          const edges = firstTurn.edges;
+          const secondEdge = edges[1];
 
-            expect(secondEdge.sequence).toEqual(2);
-            expect(secondEdge.endTimeStamp).toEqual(lastSentTimeStamp);
-            expect(secondEdge.startNode.code).toEqual('A2');
-            expect(secondEdge.endNode.code).toEqual('A1');
-          });
+          expect(secondEdge.sequence).toEqual(2);
+          expect(secondEdge.endTimeStamp).toEqual(lastSentTimeStamp);
+          expect(secondEdge.startNode.code).toEqual('A2');
+          expect(secondEdge.endNode.code).toEqual('A1');
+        });
       })
       .catch(err => {
         error = err;

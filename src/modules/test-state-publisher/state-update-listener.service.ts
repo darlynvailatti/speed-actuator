@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { Constants } from 'src/constants/constants';
+import { RedisConstants } from 'src/constants/constants';
 import { ExecutionStateGateway as ExecutionStateWS } from './execution-state-ws.service';
 import { RedisDatabase } from '../database/redis.database';
 
@@ -17,7 +17,7 @@ export class StateUpdateListenerService implements OnApplicationBootstrap {
   }
 
   private subscribeAndRegisterMessageListener(): void {
-    const channel = Constants.TEST_UPDATE_STATE_CHANNEL;
+    const channel = RedisConstants.TEST_UPDATE_STATE_CHANNEL;
     const callBack = this.handle.bind(this);
     this.redisDatabase.subscribeOnChannelAndRegisterCallback(channel, callBack);
   }

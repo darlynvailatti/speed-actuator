@@ -1,6 +1,6 @@
 import { OnApplicationBootstrap, Injectable, Logger } from '@nestjs/common';
 import { RedisDatabase } from '../database/redis.database';
-import { Constants } from 'src/constants/constants';
+import { RedisConstants } from 'src/constants/constants';
 import { Test, TestState } from 'src/models/execution/test';
 import {
   StopwatchProcessorImplementation,
@@ -38,7 +38,7 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
   }
 
   private startListeningTestUpdateStateChannel() {
-    const channel = Constants.TEST_UPDATE_STATE_CHANNEL;
+    const channel = RedisConstants.TEST_UPDATE_STATE_CHANNEL;
     const callBack = this.handle.bind(this);
     this.redisDatabase.subscribeOnChannelAndRegisterCallback(channel, callBack);
   }

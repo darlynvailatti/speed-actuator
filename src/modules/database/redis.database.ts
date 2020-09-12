@@ -1,27 +1,40 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from 'nestjs-redis';
-import { Constants } from 'src/constants/constants';
+import { RedisConstants } from 'src/constants/constants';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisDatabase {
   private readonly logger = new Logger(RedisDatabase.name);
 
-  constructor(readonly redisService: RedisService) {}
+  constructor(
+    readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+  ) {}
 
   private getClient(name: string): any {
     return this.redisService.getClient(name);
   }
 
   getRepositoryClient(): any {
-    return this.getClient(Constants.REDIS_REPOSITORY_CLIENT_NAME);
+    const repositoryClient = this.configService.get(
+      RedisConstants.REDIS_REPOSITORY_CLIENT_NAME,
+    );
+    return this.getClient(repositoryClient);
   }
 
   getPublisherClient(): any {
-    return this.getClient(Constants.REDIS_CLIENT_PUBLISHER);
+    const publicsherClient = this.configService.get(
+      RedisConstants.REDIS_CLIENT_PUBLISHER,
+    );
+    return this.getClient(publicsherClient);
   }
 
   getSubscriberClient(): any {
-    return this.getClient(Constants.REDIS_CLIENT_SUBSCRIBER);
+    const subscriberClient = this.configService.get(
+      RedisConstants.REDIS_CLIENT_SUBSCRIBER,
+    );
+    return this.getClient(subscriberClient);
   }
 
   subscribeOnChannelAndRegisterCallback(

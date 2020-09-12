@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Logger, Put } from '@nestjs/common';
+import { Controller, Body, Logger, Put } from '@nestjs/common';
 import { DetectionPublisherService } from './detection-publisher.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ConstantsApiTags } from 'src/constants/constants';

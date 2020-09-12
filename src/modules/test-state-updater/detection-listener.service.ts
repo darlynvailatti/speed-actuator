@@ -1,5 +1,5 @@
 import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
-import { Constants } from 'src/constants/constants';
+import { RedisConstants } from 'src/constants/constants';
 import { RedisDatabase } from '../database/redis.database';
 import { StateUpdaterService as TestStateUpdaterService } from './test-state-updater.service';
 
@@ -17,7 +17,7 @@ export class DetectionListenerService implements OnApplicationBootstrap {
   }
 
   private subscribeAndRegisterMessageListener() {
-    const channel = Constants.SENSOR_DETECTION_BROKER_CHANNEL;
+    const channel = RedisConstants.SENSOR_DETECTION_BROKER_CHANNEL;
     const callBack = this.handle.bind(this);
     this.redisDatabase.subscribeOnChannelAndRegisterCallback(channel, callBack);
   }

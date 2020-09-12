@@ -8,7 +8,7 @@ import {
   TestExecution,
 } from 'src/models/execution/test.execution';
 import { SensorDetectionMessage } from 'src/models/sensor/sensor-message';
-import { Constants } from 'src/constants/constants';
+import { RedisConstants } from 'src/constants/constants';
 import { RedisDatabase } from '../database/redis.database';
 import { TestViewService } from '../test-view/test-view.service';
 import { ProcessorBeginOfTestExecution } from './processor/processor-begin-of-test-execution';
@@ -166,7 +166,7 @@ export class StateUpdaterService {
     this.logger.log(`Publishing in update state channel...`);
     const redisPubClient = this.redisDatabase.getPublisherClient();
     redisPubClient.publish(
-      Constants.TEST_UPDATE_STATE_CHANNEL,
+      RedisConstants.TEST_UPDATE_STATE_CHANNEL,
       JSON.stringify(this.test),
     );
   }
