@@ -20,14 +20,12 @@ export const redisOptionsFactory = (configService: ConfigService) => {
     },
     {
       name: redisClientSubscriberName,
-      url: redisUrl,
+      url: redisUrl
     },
     {
       name: redisClientRepositortyClientName,
-      url: redisUrl,
+      url: redisUrl
     },
   ];
-
-  console.log(`Redis Options: ${options}`);
   return options;
 };

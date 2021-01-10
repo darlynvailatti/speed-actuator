@@ -10,9 +10,8 @@ export class DetectionPublisherService {
   constructor(private readonly redisDatabase: RedisDatabase) {}
 
   async detectionReception(sensorDetectionMessage: SensorDetectionMessage) {
-    const redisPubClient = this.redisDatabase.getPublisherClient();
-    this.logger.log(`publishing received detection: ${sensorDetectionMessage}`);
-
+    let redisPubClient = this.redisDatabase.getPublisherClient();
+    this.logger.log(`Publishing received detection on ${RedisConstants.SENSOR_DETECTION_BROKER_CHANNEL}: ${JSON.stringify(sensorDetectionMessage)}`);
     redisPubClient.publish(
       RedisConstants.SENSOR_DETECTION_BROKER_CHANNEL,
       JSON.stringify(sensorDetectionMessage),

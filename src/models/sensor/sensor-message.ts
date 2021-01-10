@@ -1,12 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Sensor } from './sensor';
 
 export class SensorMessage {
-  createdTimeStamp: string;
-  sensor: Sensor;
+  @ApiProperty() createdTimeStamp?: string;
+  @ApiProperty() sensor: Sensor;
 }
 
 export class SensorDetectionMessage extends SensorMessage {
-  timeStamp: string;
+  @ApiProperty() timeStamp: string;
 }
 
 export class SensorStateChangeMessage extends SensorMessage {

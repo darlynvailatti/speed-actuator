@@ -8,9 +8,11 @@ import { TestTemplateModule } from './modules/test-template/test-template.module
 import { TestModule } from './modules/test/test.module';
 import { TestViewModule } from './modules/test-view/test-view.module';
 import { StopWatcherModule } from './modules/stopwatcher/stopwatcher.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
+    AdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

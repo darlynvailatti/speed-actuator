@@ -30,11 +30,12 @@ export class TestService {
       throw new Error(validationTemplateResponse.causeIfIsNotValid);
     }
 
+    newTest.state = TestState.IDLE;
     const wasCreated = await this.testRepositoryService.save(newTest);
 
-    this.logger.log(`posted Test: ${JSON.stringify(wasCreated)}`);
+    this.logger.log(`Was Test created? ${JSON.stringify(wasCreated)}`);
 
-    return true;
+    return wasCreated;
   }
 
   async changeToReady(testCode: string) {

@@ -34,6 +34,8 @@ export class ProcessorMidleOfTurn {
         // Find last execution edge
         this.executionEdge = this.findLastExecutionEdge()
 
+
+
         const edgeSequence = this.executionEdge.edge.sequence
         const edgeTemplate = this.findEdgeOnTemplateBySequence(edgeSequence)
 
@@ -106,9 +108,18 @@ export class ProcessorMidleOfTurn {
 
     private processEndOfTurn() {
         this.logger.log(`End of turn`)
-        const isFinalTurn = this.currentTurn.number === this.test.numberOfTurns
+        let numberOfTurns = 0
+        if (this.test.numberOfTurns)
+            numberOfTurns = this.test.numberOfTurns
+        else if (this.test.template.numberOfTurns)
+            numberOfTurns = this.test.template.numberOfTurns
 
-        this.logger.log(`Is final turn? ${isFinalTurn}`)
+        let isFinalTurn = numberOfTurns === 0 ? true: false
+
+        if(!isFinalTurn)
+            isFinalTurn = this.currentTurn.number === numberOfTurns
+
+        this.logger.log(`Is final turn? ${isFinalTurn} : ${this.currentTurn.number} - ${numberOfTurns}`)
         if(isFinalTurn){
             const doneState = TestState.DONE
             this.logger.log(`Is final turn, changing test state to ${doneState}`)
@@ -127,12 +138,15 @@ export class ProcessorMidleOfTurn {
         if(!firstEdgeOfGraph)
             throw new Error(`Can't found the first edge of the graph`)
 
+        // End node and start node are the same
+        let endNodeAndStartNodeAreTheSame = this.executionNode.node.code === firstEdgeOfGraph.startNode.code
+
         const newStartExecutionEdge : TestExecutionEdge = {
             edge: {
                 sequence: firstEdgeOfGraph.sequence
             },
             startNode: {
-                recordedTimeStamp: this.executionNode.recordedTimeStamp,
+                recordedTimeStamp: endNodeAndStartNodeAreTheSame ? this.executionNode.recordedTimeStamp : null,
                 node: {
                     code: firstEdgeOfGraph.startNode.code
                 }
@@ -146,7 +160,7 @@ export class ProcessorMidleOfTurn {
 
         this.test.testExecution.turns.push({
             number: newTurn,
-            startTimeStamp: endRecordedTimeStamp,
+            startTimeStamp: endNodeAndStartNodeAreTheSame ? endRecordedTimeStamp : null,
             executionEdges:[
                 newStartExecutionEdge
             ]

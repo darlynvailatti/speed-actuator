@@ -15,7 +15,7 @@ export class TestViewController {
   constructor(private readonly testViewService: TestViewService) {}
 
   @ApiOperation({ summary: 'Get test view by code' })
-  @ApiResponse({ status: 200, type: Test })
+  @ApiResponse({ status: 200, type: TestView })
   @ApiTags(ConstantsApiTags.VIEW_API_TAG)
   @Get('/:testCode')
   async get(@Param('testCode') testCode: string): Promise<TestView> {
