@@ -5,9 +5,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Test {
   @ApiProperty() code?: string;
   @ApiProperty() description: string;
+  @ApiProperty() state: TestState;
   @ApiProperty() numberOfTurns: number;
   @ApiProperty() template: TestTemplate;
-  @ApiProperty() state: TestState;
   @ApiProperty() testExecution?: TestExecution;
 }
 

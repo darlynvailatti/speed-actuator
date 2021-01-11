@@ -18,17 +18,27 @@ export class TestRepositoryService {
   }
 
   async findReadyOrStarted(): Promise<Array<Test>> {
+
+    const foundTests = await this.getAll();
+    const filteredTests = []
+    for (const test of foundTests) {
+      if (test.state === TestState.READY || test.state === TestState.STARTED) {
+        filteredTests.push(test);
+      }
+    }
+    return filteredTests;
+  }
+
+  async getAll(): Promise<Array<Test>> {
     const client = this.redisDatabase.getRepositoryClient();
     const tests: Array<string> = await client.keys(this.MODEL_NAME + '*');
 
     if (!tests) return [];
 
-    const foundTests = [];
+    let foundTests = []
     for (const testKey of tests) {
       const test: Test = await JSON.parse(await client.get(testKey));
-      if (test.state === TestState.READY || test.state === TestState.STARTED) {
-        foundTests.push(test);
-      }
+      foundTests.push(test)
     }
     return foundTests;
   }
