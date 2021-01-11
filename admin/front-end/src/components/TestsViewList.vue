@@ -13,6 +13,9 @@
         <v-icon small class="mr-2" @click="cancelTestExecution(item)">
           mdi-cancel
         </v-icon>
+        <v-icon small class="mr-2" @click="viewTest(item)">
+          mdi-eye
+        </v-icon>
       </template>
     </v-data-table>
 
@@ -54,6 +57,10 @@ export default class TestsViewList extends Vue {
     speedActuatorStoreModule.setTestExecutionToReady(test.code).catch(error => {
       this.showSnackbar(error);
     });
+  }
+
+  async viewTest(test: TestModel) {
+    this.$router.push({ path: `/test-view/${test.code}` });
   }
 
   showSnackbar(meessage: string) {

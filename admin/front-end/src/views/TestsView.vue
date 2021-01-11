@@ -17,7 +17,6 @@ import { speedActuatorStoreModule } from '@/store/speed-actuator-store';
 })
 export default class TestsView extends Vue {
   created() {
-    console.log(this.sockets);
     this.sockets.subscribe('TEST_VIEW_CHANNEL_WS', data => {
       const message = data.replaceAll('\\', '\\');
       const messageAsJson = JSON.parse(message);
