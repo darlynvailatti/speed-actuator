@@ -18,11 +18,6 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title></v-toolbar-title>
-    </v-app-bar>
-
     <v-content>
       <v-container fluid class="ma-0">
         <router-view></router-view>
@@ -41,7 +36,7 @@ import Component from 'vue-class-component';
   components: { TestsView },
 })
 export default class App extends Vue {
-  drawer = false;
+  drawer = true;
   items = [
     {
       routePath: '/',

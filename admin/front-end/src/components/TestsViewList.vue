@@ -7,13 +7,13 @@
       class="elevation-1"
     >
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="setTestExecutionToReady(item)">
+        <v-icon class="mr-2" @click="setTestExecutionToReady(item)">
           mdi-hand
         </v-icon>
-        <v-icon small class="mr-2" @click="cancelTestExecution(item)">
+        <v-icon class="mr-2" @click="cancelTestExecution(item)">
           mdi-cancel
         </v-icon>
-        <v-icon small class="mr-2" @click="viewTest(item)">
+        <v-icon class="mr-2" @click="viewTest(item)">
           mdi-eye
         </v-icon>
       </template>
@@ -33,8 +33,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { speedActuatorStoreModule } from '@/store/speed-actuator-store';
-import { TestModel } from '@/models/test-mode';
+import { speedActuatorStoreModule } from '../store/speed-actuator-store';
+import { TestModel } from '../models/test-mode';
 
 @Component({
   name: 'TestsViewList',
@@ -69,16 +69,16 @@ export default class TestsViewList extends Vue {
   }
 
   get tests() {
-    return speedActuatorStoreModule.tests;
+    return speedActuatorStoreModule.getTests;
   }
 
   get testHeaders() {
     return [
+      { text: 'Actions', value: 'actions', sortable: false },
       { text: 'Code', value: 'code' },
       { text: 'State', value: 'state' },
-      { text: 'Template', value: 'template.description' },
-      { text: 'Turns', value: 'template.numberOfTurns' },
-      { text: 'Actions', value: 'actions', sortable: false },
+      { text: 'Template', value: 'description' },
+      { text: 'Turns', value: 'numberOfTurns' },
     ];
   }
 
@@ -90,7 +90,7 @@ export default class TestsViewList extends Vue {
     return 'Update to Ready';
   }
 
-  created() {
+  beforeMount() {
     this.refresh();
   }
 }

@@ -4,9 +4,10 @@ import axios from 'axios';
 class SpeedActuatorService {
   private URL = 'http://localhost:3001';
 
-  async getAllTests(): Promise<TestModel> {
+  async getAllTests(): Promise<Array<TestModel>> {
     const endpoint = `${this.URL}/test-view`;
-    return (await axios.get<TestModel>(endpoint)).data;
+    const tests = (await axios.get<Array<TestModel>>(endpoint)).data;
+    return tests;
   }
 
   async cancelTestExecution(testCode: string) {
@@ -21,6 +22,11 @@ class SpeedActuatorService {
     return axios.put(endpoint).catch(error => {
       throw error.response.data.error;
     });
+  }
+
+  async getTestByCode(testCode: string) {
+    const endpoint = `${this.URL}/test-view/${testCode}`;
+    return (await axios.get<TestModel>(endpoint)).data;
   }
 }
 

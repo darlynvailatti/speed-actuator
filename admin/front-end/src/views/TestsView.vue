@@ -1,13 +1,14 @@
 <template>
   <div class="home">
-    <TestsViewList />
+    <tests-view-list />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import TestsViewList from '@/components/TestsViewList.vue';
-import { speedActuatorStoreModule } from '@/store/speed-actuator-store';
+import TestsViewList from '../components/TestsViewList.vue';
+import { speedActuatorStoreModule } from '../store/speed-actuator-store';
+import { subscribeOnTestStateChannel } from '../service/socket-service';
 
 @Component({
   name: 'TestsView',
@@ -17,12 +18,7 @@ import { speedActuatorStoreModule } from '@/store/speed-actuator-store';
 })
 export default class TestsView extends Vue {
   created() {
-    this.sockets.subscribe('TEST_VIEW_CHANNEL_WS', data => {
-      const message = data.replaceAll('\\', '\\');
-      const messageAsJson = JSON.parse(message);
-      const testAsJson = JSON.parse(messageAsJson);
-      speedActuatorStoreModule.updateJustOneTest(testAsJson);
-    });
+    subscribeOnTestStateChannel(this);
   }
 }
 </script>

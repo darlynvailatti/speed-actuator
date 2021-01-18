@@ -8,6 +8,8 @@ import {
   TestExecutionTurn,
   TestExecutionEdge,
 } from 'src/models/execution/test.execution';
+import { RedisDatabase } from '../database/redis.database';
+import { RedisConstants } from 'src/constants/constants';
 
 @Injectable()
 export class TestService {
@@ -16,6 +18,7 @@ export class TestService {
   constructor(
     private readonly testRepositoryService: TestRepositoryService,
     private readonly testTemplateService: TestTemplateService,
+    private readonly redisDatabase: RedisDatabase,
   ) {}
 
   async postTest(postTest: PostTest): Promise<boolean> {
@@ -38,18 +41,6 @@ export class TestService {
     return wasCreated;
   }
 
-  async changeToReady(testCode: string) {
-    const tests = await this.testRepositoryService.findReadyOrStarted();
-    const foundReadyTest = tests.filter(t => t.code === testCode)[0];
-
-    if (foundReadyTest && foundReadyTest.code != testCode)
-      throw new Error(
-        `Another test (${foundReadyTest.code}) is already ready to start`,
-      );
-
-    await this.changeState(testCode, TestState.READY);
-  }
-
   async changeState(testCode: string, newState: TestState) {
     try {
       const foundTest = await this.foundTestOrThrowError(testCode);
@@ -57,14 +48,16 @@ export class TestService {
       if (isAlreadyInThisState)
         throw new Error(`Test ${testCode} is already ${newState}`);
       TestStateMachine.change(foundTest, newState);
-      await this.testRepositoryService.save(foundTest);
+      await this.updateTest(foundTest);
     } catch (error) {
       throw new Error(`Error when start Test: ${error.message}`);
     }
   }
 
   async updateTest(test: Test): Promise<boolean> {
-    return await this.testRepositoryService.save(test);
+    const updatedTest = await this.testRepositoryService.save(test);
+    await this.publishTestState(test);
+    return updatedTest;
   }
 
   public getLastExecutionTurn(test: Test): TestExecutionTurn {
@@ -100,5 +93,16 @@ export class TestService {
     if (!foundTest) throw new Error(`Can't find Test with code ${testCode}`);
 
     return foundTest;
+  }
+
+  public async publishTestState(test: Test) {
+    if (!test) throw new Error(`Can't publish state for a null test`);
+
+    this.logger.log(`Publishing in update state channel...`);
+    const redisPubClient = this.redisDatabase.getPublisherClient();
+    redisPubClient.publish(
+      RedisConstants.TEST_UPDATE_STATE_CHANNEL,
+      JSON.stringify(test),
+    );
   }
 }

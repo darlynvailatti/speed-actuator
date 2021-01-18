@@ -8,13 +8,11 @@ import {
   TestExecution,
 } from 'src/models/execution/test.execution';
 import { SensorDetectionMessage } from 'src/models/sensor/sensor-message';
-import { RedisConstants } from 'src/constants/constants';
-import { RedisDatabase } from '../database/redis.database';
-import { TestViewService } from '../test-view/test-view.service';
 import { ProcessorBeginOfTestExecution } from './processor/processor-begin-of-test-execution';
-import { ProcessorMidleOfTurn as ProcessorMidleOrEndOfTestExecution } from './processor/processor-midle-or-end-of-test-execution';
+import { ProcessorMidleOrEndOfTurn } from './processor/processor-midle-or-end-of-test-execution';
 import ProcessorConvertDetectionToExecutionNode from './processor/processor-convert-detection-to-execution-node';
 import { ProcessorGetCurrentTurnOrCreateOne } from './processor/processor-get-current-turn-or-create-one';
+import { TestService } from '../test/test.service';
 
 @Injectable()
 export class StateUpdaterService {
@@ -29,8 +27,7 @@ export class StateUpdaterService {
   private receivedDetectionMessage: string;
 
   constructor(
-    private readonly redisDatabase: RedisDatabase,
-    private readonly testeViewService: TestViewService,
+    private readonly testService: TestService,
     private readonly testRespositoryService: TestRepositoryService,
   ) {}
 
@@ -146,7 +143,7 @@ export class StateUpdaterService {
   }
 
   private async processMidleOrEndOfTestExecution() {
-    const processor = new ProcessorMidleOrEndOfTestExecution(
+    const processor = new ProcessorMidleOrEndOfTurn(
       this.test,
       this.testTemplate,
       this.executionNode,
@@ -163,11 +160,6 @@ export class StateUpdaterService {
   }
 
   private async publish() {
-    this.logger.log(`Publishing in update state channel...`);
-    const redisPubClient = this.redisDatabase.getPublisherClient();
-    redisPubClient.publish(
-      RedisConstants.TEST_UPDATE_STATE_CHANNEL,
-      JSON.stringify(this.test),
-    );
+    await this.testService.publishTestState(this.test);
   }
 }

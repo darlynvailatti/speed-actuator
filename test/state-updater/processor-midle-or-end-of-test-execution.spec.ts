@@ -1,64 +1,65 @@
-import { TestExecutionTurn } from "src/models/execution/test.execution"
-import { ProcessorMidleOfTurn } from "src/modules/test-state-updater/processor/processor-midle-or-end-of-test-execution"
+import { TestExecutionTurn } from 'src/models/execution/test.execution';
+import { ProcessorMidleOrEndOfTurn } from 'src/modules/test-state-updater/processor/processor-midle-or-end-of-test-execution';
 
 describe('Proccess midle or end of test execution', () => {
+  test('Invalid turn', () => {
+    const expectedErrorMessage = 'Current turn is not valid';
 
+    const turnInvalidNumber: TestExecutionTurn = {
+      number: -1,
+      startTimeStamp: '',
+    };
 
-    test('Invalid turn', () => {
-        const expectedErrorMessage = 'Current turn is not valid'
+    const turnWihtoutExecutionEdge: TestExecutionTurn = {
+      number: 1,
+      executionEdges: [],
+      startTimeStamp: '',
+    };
 
-        const turnInvalidNumber : TestExecutionTurn = {
-            number: -1,
-            startTimeStamp: ''
-        }
+    const fakeTest: any = 0;
+    const fakeTestTemplate: any = 0;
+    const fakeTestExecutionNode: any = 0;
 
-        const turnWihtoutExecutionEdge : TestExecutionTurn = {
-            number: 1,
-            executionEdges: [],
-            startTimeStamp: ''
-        }
+    let processor = new ProcessorMidleOrEndOfTurn(
+      fakeTest,
+      fakeTestTemplate,
+      fakeTestExecutionNode,
+      turnInvalidNumber,
+    );
 
-        const fakeTest : any = 0
-        const fakeTestTemplate : any = 0
-        const fakeTestExecutionNode : any = 0
+    expect(processor.execute()).rejects.toEqual(
+      new Error(expectedErrorMessage),
+    );
 
-        let processor = new ProcessorMidleOfTurn(
-            fakeTest,
-            fakeTestTemplate,
-            fakeTestExecutionNode,
-            turnInvalidNumber
-        )
-   
-        expect(processor.execute()).rejects.toEqual(new Error(expectedErrorMessage))
+    processor = new ProcessorMidleOrEndOfTurn(
+      fakeTest,
+      fakeTestTemplate,
+      fakeTestExecutionNode,
+      turnWihtoutExecutionEdge,
+    );
 
-        processor = new ProcessorMidleOfTurn(
-            fakeTest,
-            fakeTestTemplate,
-            fakeTestExecutionNode,
-            turnWihtoutExecutionEdge
-        )
+    expect(processor.execute()).rejects.toEqual(
+      new Error(expectedErrorMessage),
+    );
+  });
 
-        expect(processor.execute()).rejects.toEqual(new Error(expectedErrorMessage))
+  test("Current turn can't be undefined", () => {
+    const expectedErrorMessage = "Current turn can't be undefined";
 
-    })
+    const fakeTest: any = 0;
+    const fakeTestTemplate: any = 0;
+    const fakeTestExecutionNode: any = 0;
+    const fakeTurn: any = null;
 
-    test('Current turn can\'t be undefined', () => {
-        const expectedErrorMessage = 'Current turn can\'t be undefined'
-    
-        const fakeTest : any = 0
-        const fakeTestTemplate : any = 0
-        const fakeTestExecutionNode : any = 0
-        const fakeTurn: any = null
+    const processor = new ProcessorMidleOrEndOfTurn(
+      fakeTest,
+      fakeTestTemplate,
+      fakeTestExecutionNode,
+      fakeTurn,
+    );
 
-        const processor = new ProcessorMidleOfTurn(
-            fakeTest,
-            fakeTestTemplate,
-            fakeTestExecutionNode,
-            fakeTurn
-        )
-
-        expect(processor.execute()).rejects.toEqual(new Error(expectedErrorMessage))
-
-    })
-
-})
+    expect(processor.execute()).rejects.toEqual(
+      new Error(expectedErrorMessage),
+    );
+  });
+});

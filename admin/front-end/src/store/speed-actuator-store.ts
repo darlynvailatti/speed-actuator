@@ -1,4 +1,5 @@
 import { TestModel } from '@/models/test-mode';
+import { TestModelConverter } from '@/converter/convert-test-to-view';
 import { speedActuatorService } from '@/service/speed-actuator-service';
 import {
   VuexModule,
@@ -8,9 +9,11 @@ import {
   getModule,
 } from 'vuex-module-decorators';
 import store from '@/store/index';
+import { TestViewModel } from '@/models/test-view-model';
 
 export interface InterfaceSpeedActuatorState {
-  tests: Array<TestModel>;
+  tests: Array<TestViewModel>;
+  testViewCode: string;
 }
 
 @Module({
@@ -20,26 +23,70 @@ export interface InterfaceSpeedActuatorState {
 })
 class SpeedActuatorModule extends VuexModule
   implements InterfaceSpeedActuatorState {
-  public tests: Array<TestModel> = [];
+  public tests: Array<TestViewModel> = [];
+  public testViewCode = '';
+
+  get getTestView(): TestViewModel {
+    console.log('get test view by ' + this.testViewCode);
+    const testView = this.tests.find(t => t.code === this.testViewCode);
+    if (testView) return testView;
+    else
+      return {
+        code: '',
+        description: '',
+        numberOfTurns: 0,
+        state: '',
+        turns: [],
+      };
+  }
+
+  get getTests() {
+    return this.tests;
+  }
+
   @Mutation
-  public setTests(tests: Array<TestModel>): void {
+  public setTests(tests: Array<TestViewModel>): void {
     this.tests = tests;
+  }
+
+  @Mutation
+  public setTestViewCode(testCode: string): void {
+    this.testViewCode = testCode;
+  }
+
+  @Action({ rawError: true })
+  public async viewTestByCode(testCode: string) {
+    this.context.commit('setTestViewCode', testCode);
   }
 
   @Action({ rawError: true })
   public async updateTests(): Promise<void> {
-    const tests = await speedActuatorService.getAllTests();
-    console.log(tests);
-    this.context.commit('setTests', tests);
+    const allTests: Array<TestModel> = await speedActuatorService.getAllTests();
+    const convertedTests: Array<TestViewModel> = [];
+    allTests.forEach(t => {
+      const converter = new TestModelConverter(t);
+      const convertedTest = converter.convertToView();
+      convertedTests.push(convertedTest);
+    });
+    this.context.commit('setTests', convertedTests);
   }
 
   @Action({ rawError: true })
   public async updateJustOneTest(test: any) {
-    console.log(test.code);
-    const otherTests = this.tests.filter(t => t.code != test.code);
-
-    otherTests.push(test);
+    const convertedTest = await this.convertToModel(test);
+    const otherTests = this.tests.filter(t => t.code != convertedTest.code);
+    otherTests.push(convertedTest);
     this.context.commit('setTests', otherTests);
+  }
+
+  @Action({ rawError: true })
+  public async refreshTest(testCode: string) {
+    try {
+      const refreshedTest = await speedActuatorService.getTestByCode(testCode);
+      await this.updateJustOneTest(refreshedTest);
+    } catch (error) {
+      throw new Error(`Error on refreshing the test ${testCode}: ${error}`);
+    }
   }
 
   @Action({ rawError: true })
@@ -60,6 +107,13 @@ class SpeedActuatorModule extends VuexModule
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  @Action({ rawError: true })
+  private async convertToModel(test: any): Promise<TestViewModel> {
+    const converter = new TestModelConverter(test);
+    const convertedTest = converter.convertToView();
+    return convertedTest;
   }
 }
 export const speedActuatorStoreModule = getModule(SpeedActuatorModule);

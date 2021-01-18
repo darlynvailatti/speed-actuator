@@ -53,9 +53,9 @@ export class TestExecutionController {
   @ApiOperation({ summary: 'Put test in Ready' })
   @ApiTags(ConstantsApiTags.EXECUTION_API_TAG)
   @Put('/:testCode/execution/ready')
-  async makeReady(@Param('testCode') testCode: string) {
+  async setToReady(@Param('testCode') testCode: string) {
     try {
-      await this.testService.changeToReady(testCode);
+      await this.testService.changeState(testCode, TestState.READY);
     } catch (error) {
       throw new HttpException(
         {
