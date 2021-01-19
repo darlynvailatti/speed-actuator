@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <highcharts :options="chartOptions"></highcharts>
     <v-expansion-panels :value="currentTurnNumber - 1">
       <v-expansion-panel
         v-for="turn in testView.turns"
@@ -194,7 +195,6 @@ import TestView from '../views/TestView.vue';
 
 @Component({
   name: 'TestExecutionDetails',
-  components: {},
 })
 export default class TestExecutionDetails extends Vue {
   DEFAULT_CONCLUDE_COLOR_STATUS = 'teal accent-2';
@@ -203,11 +203,14 @@ export default class TestExecutionDetails extends Vue {
   currentActiveEdgeSequence = 0;
   currentTurnNumber = -1;
 
+  chartOptions: any = {};
+
   get testView(): TestViewModel {
     const t = speedActuatorStoreModule.getTestView;
     this.localTestView = t;
     this.updateCurrentExecutionEdgeOfTurn(t);
     this.updateCurrentTurnExecution(t);
+    this.updateChart(t);
     return t;
   }
 
@@ -251,6 +254,58 @@ export default class TestExecutionDetails extends Vue {
       .find(t => !t.isCompleted);
     if (firstTurnNotCompletedYet)
       this.currentTurnNumber = firstTurnNotCompletedYet.number;
+  }
+
+  private updateChart(testView: TestViewModel) {
+    const categories: string[] = [];
+    const xAxis = {
+      categories: categories,
+    };
+    const yAxis = {
+      title: {
+        text: 'Velocity (m/s)',
+      },
+    };
+
+    const plotOptions = {
+      line: {
+        dataLabels: {
+          enabled: true,
+        },
+        enableMouseTracking: false,
+      },
+    };
+
+    const series: any = [];
+
+    testView.turns[0].edges.forEach(e => xAxis.categories.push(e.description));
+    testView.turns.forEach(t => {
+      const data: number[] = [];
+      const serie = {
+        name: `Turn ${t.number}`,
+        data: data,
+      };
+      t.edges.forEach(e => serie.data.push(e.velocity));
+      series.push(serie);
+    });
+    this.chartOptions = {
+      chart: {
+        type: 'line',
+        height: '250',
+      },
+      title: {
+        text: 'Velocity per Turn x Edge',
+      },
+      yAxis: yAxis,
+      xAxis: xAxis,
+      series: series,
+      plotOptions: {
+        line: {
+          enableMouseTracking: false,
+        },
+      },
+    };
+    console.log(this.chartOptions);
   }
 }
 </script>

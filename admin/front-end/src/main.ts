@@ -4,6 +4,7 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import VueSocketIO from 'vue-socket.io';
+import HighchartsVue from 'highcharts-vue';
 
 Vue.config.productionTip = false;
 
@@ -13,6 +14,8 @@ Vue.use(
     connection: 'http://localhost:3001', //Optional options
   }),
 );
+
+Vue.use(HighchartsVue);
 
 new Vue({
   router,
