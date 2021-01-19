@@ -43,7 +43,7 @@ export class ProcessorMidleOrEndOfTurn {
 
     // By default must expect for end node of each edge, but there is one exception:
     // When the current execution edge does not have startTimeStamp, means that
-    // it demands do be processed
+    // it demands do be processed as the context execution node
 
     const isCurrentExecutionEdgeAlreadyHasStartTimestamp = this.executionEdge
       .startNode.recordedTimeStamp
@@ -106,7 +106,7 @@ export class ProcessorMidleOrEndOfTurn {
     if (isEndOfTurn) {
       this.processEndOfTurn();
     } else {
-      this.processMidleOfTurn();
+      this.processBeginOrMidleOfTurn();
     }
   }
 
@@ -116,11 +116,12 @@ export class ProcessorMidleOrEndOfTurn {
       .reverse()[0];
   }
 
-  private processMidleOfTurn() {
+  private processBeginOrMidleOfTurn() {
     if (this.currentExecutionEdgeIsForStartNode) {
       this.logger.log(
         'Current execution edge context is about Start Node, will not create next execution edge',
       );
+      this.currentTurn.startTimeStamp = this.executionNode.recordedTimeStamp;
       return;
     }
 
