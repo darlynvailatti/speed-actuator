@@ -46,7 +46,7 @@
         </v-expansion-panel-header>
         <v-divider />
         <v-expansion-panel-content>
-          <v-stepper vertical non-linear>
+          <v-stepper v-model="currentActiveEdgeSequence">
             <v-stepper-header>
               <template v-for="edge in turn.edges">
                 <v-stepper-step
@@ -200,11 +200,12 @@ export default class TestExecutionDetails extends Vue {
   DEFAULT_CONCLUDE_COLOR_STATUS = 'teal accent-2';
 
   localTestView!: TestViewModel;
+  currentActiveEdgeSequence = 0;
 
   get testView(): TestViewModel {
     const t = speedActuatorStoreModule.getTestView;
     this.localTestView = t;
-    console.log(t);
+    this.updateCurrentExecutionEdgeOfTurn(t);
     return t;
   }
 
@@ -225,6 +226,21 @@ export default class TestExecutionDetails extends Vue {
       percentage = (totalCompletedEdges / totalEdges) * 100;
 
     return percentage;
+  }
+
+  public updateCurrentExecutionEdgeOfTurn(testView: TestViewModel) {
+    const firstTurnNotCompleted = testView.turns
+      .sort((a, b) => a.number - b.number)
+      .find(t => !t.isCompleted);
+
+    if (!firstTurnNotCompleted) return;
+
+    const firstEdgeNotCompleted = firstTurnNotCompleted.edges
+      .sort((a, b) => a.sequence - b.sequence)
+      .find(e => !e.isCompleted);
+
+    if (firstEdgeNotCompleted)
+      this.currentActiveEdgeSequence = firstEdgeNotCompleted.sequence;
   }
 }
 </script>
