@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-expansion-panels>
+    <v-expansion-panels :value="currentTurnNumber - 1">
       <v-expansion-panel
         v-for="turn in testView.turns"
         v-bind:key="turn.number"
@@ -201,11 +201,13 @@ export default class TestExecutionDetails extends Vue {
 
   localTestView!: TestViewModel;
   currentActiveEdgeSequence = 0;
+  currentTurnNumber = -1;
 
   get testView(): TestViewModel {
     const t = speedActuatorStoreModule.getTestView;
     this.localTestView = t;
     this.updateCurrentExecutionEdgeOfTurn(t);
+    this.updateCurrentTurnExecution(t);
     return t;
   }
 
@@ -228,7 +230,7 @@ export default class TestExecutionDetails extends Vue {
     return percentage;
   }
 
-  public updateCurrentExecutionEdgeOfTurn(testView: TestViewModel) {
+  private updateCurrentExecutionEdgeOfTurn(testView: TestViewModel) {
     const firstTurnNotCompleted = testView.turns
       .sort((a, b) => a.number - b.number)
       .find(t => !t.isCompleted);
@@ -241,6 +243,14 @@ export default class TestExecutionDetails extends Vue {
 
     if (firstEdgeNotCompleted)
       this.currentActiveEdgeSequence = firstEdgeNotCompleted.sequence;
+  }
+
+  private updateCurrentTurnExecution(testView: TestViewModel) {
+    const firstTurnNotCompletedYet = testView.turns
+      .sort((a, b) => a.number - b.number)
+      .find(t => !t.isCompleted);
+    if (firstTurnNotCompletedYet)
+      this.currentTurnNumber = firstTurnNotCompletedYet.number;
   }
 }
 </script>
