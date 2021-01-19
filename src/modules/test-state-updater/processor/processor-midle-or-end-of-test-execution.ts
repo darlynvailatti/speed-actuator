@@ -7,6 +7,8 @@ import { TestTemplate } from 'src/models/template/test.template';
 import { Test, TestState } from 'src/models/execution/test';
 import { Logger } from '@nestjs/common';
 import { TestStateMachine } from 'src/modules/test/impl/test-state-machine';
+import { EnsureThat } from 'src/common/validate';
+import { Node } from 'src/models/template/edge';
 
 export class ProcessorMidleOrEndOfTurn {
   private readonly logger = new Logger(ProcessorMidleOrEndOfTurn.name);
@@ -16,6 +18,7 @@ export class ProcessorMidleOrEndOfTurn {
   private currentTurn: TestExecutionTurn;
   private test: Test;
   private executionEdge: TestExecutionEdge;
+  private currentExecutionEdgeIsForStartNode: boolean;
 
   constructor(
     test: Test,
@@ -38,33 +41,56 @@ export class ProcessorMidleOrEndOfTurn {
     const edgeSequence = this.executionEdge.edge.sequence;
     const edgeTemplate = this.findEdgeOnTemplateBySequence(edgeSequence);
 
-    const expectedNodeCode = edgeTemplate.endNode.code;
+    // By default must expect for end node of each edge, but there is one exception:
+    // When the current execution edge does not have startTimeStamp, means that
+    // it demands do be processed
+
+    const isCurrentExecutionEdgeAlreadyHasStartTimestamp = this.executionEdge
+      .startNode.recordedTimeStamp
+      ? true
+      : false;
+
+    this.currentExecutionEdgeIsForStartNode = !isCurrentExecutionEdgeAlreadyHasStartTimestamp;
+
+    let expectedNode: Node = edgeTemplate.endNode;
+    if (this.currentExecutionEdgeIsForStartNode)
+      expectedNode = edgeTemplate.startNode;
+
+    EnsureThat.isNotNull(
+      expectedNode,
+      `Was not possible to find what is the expected node code`,
+    );
 
     const isMatchExpectedNode =
-      expectedNodeCode === this.executionNode.node.code;
+      expectedNode.code === this.executionNode.node.code;
     if (!isMatchExpectedNode) {
       this.logger.log(
-        `Node ${this.executionNode.node.code} don't match the expected Node ${expectedNodeCode}`,
+        `Node ${this.executionNode.node.code} don't match the expected Node ${expectedNode.code}`,
       );
       return;
     }
 
-    this.executionEdge.endNode = this.executionNode;
+    if (this.currentExecutionEdgeIsForStartNode)
+      this.executionEdge.startNode = this.executionNode;
+    else this.executionEdge.endNode = this.executionNode;
 
-    const edgeDistance = edgeTemplate.distance;
+    // Only process variables when the current exection Edge is at end node
+    if (this.executionEdge.endNode) {
+      const edgeDistance = edgeTemplate.distance;
 
-    const edgeRecordedStartTime = Number.parseInt(
-      this.executionEdge.startNode.recordedTimeStamp,
-    );
-    const edgeRecordedEndTime = Number.parseInt(
-      this.executionEdge.endNode.recordedTimeStamp,
-    );
-    const totalTime = (edgeRecordedEndTime - edgeRecordedStartTime) / 1000;
+      const edgeRecordedStartTime = Number.parseInt(
+        this.executionEdge.startNode.recordedTimeStamp,
+      );
+      const edgeRecordedEndTime = Number.parseInt(
+        this.executionEdge.endNode.recordedTimeStamp,
+      );
+      const totalTime = (edgeRecordedEndTime - edgeRecordedStartTime) / 1000;
 
-    this.executionEdge.totalTime = totalTime;
-    this.executionEdge.velocity = edgeDistance / totalTime;
+      this.executionEdge.totalTime = totalTime;
+      this.executionEdge.velocity = edgeDistance / totalTime;
 
-    this.logger.log(`Last execution edge: ${this.executionEdge}`);
+      this.logger.log(`Last execution edge: ${this.executionEdge}`);
+    }
 
     const lastEdgeInGraphBySequence = this.testTemplate.graph.edges
       .sort((a, b) => a.sequence - b.sequence)
@@ -74,7 +100,8 @@ export class ProcessorMidleOrEndOfTurn {
     );
 
     const isEndOfTurn =
-      this.executionEdge.edge.sequence === lastEdgeInGraphBySequence.sequence;
+      this.executionEdge.edge.sequence === lastEdgeInGraphBySequence.sequence &&
+      !this.currentExecutionEdgeIsForStartNode;
 
     if (isEndOfTurn) {
       this.processEndOfTurn();
@@ -90,31 +117,35 @@ export class ProcessorMidleOrEndOfTurn {
   }
 
   private processMidleOfTurn() {
+    if (this.currentExecutionEdgeIsForStartNode) {
+      this.logger.log(
+        'Current execution edge context is about Start Node, will not create next execution edge',
+      );
+      return;
+    }
+
     const nextSequence = this.executionEdge.edge.sequence + 1;
     const nextEdge = this.findEdgeOnTemplateBySequence(nextSequence);
 
     const isLastNodeEqualsToNextNode =
       nextEdge.startNode.code === this.executionEdge.endNode.node.code;
 
-    if (isLastNodeEqualsToNextNode) {
-      this.logger.log(
-        `Last node is equal to next node, creating new execution edge`,
-      );
-      const nextExecutionEdge: TestExecutionEdge = {
-        edge: {
-          sequence: nextEdge.sequence,
+    const nextExecutionEdge: TestExecutionEdge = {
+      edge: {
+        sequence: nextEdge.sequence,
+      },
+      startNode: {
+        node: {
+          code: nextEdge.startNode.code,
         },
-        startNode: {
-          node: {
-            code: nextEdge.startNode.code,
-          },
-          recordedTimeStamp: this.executionNode.recordedTimeStamp,
-        },
-      };
+        recordedTimeStamp: isLastNodeEqualsToNextNode
+          ? this.executionNode.recordedTimeStamp
+          : null,
+      },
+    };
 
-      // Update execution edges, adding the new
-      this.currentTurn.executionEdges.push(nextExecutionEdge);
-    }
+    // Update execution edges, adding the new
+    this.currentTurn.executionEdges.push(nextExecutionEdge);
   }
 
   private processEndOfTurn() {
@@ -133,9 +164,7 @@ export class ProcessorMidleOrEndOfTurn {
     else if (this.test.template.numberOfTurns)
       numberOfTurns = this.test.template.numberOfTurns;
 
-    let isFinalTurn = numberOfTurns === 0 ? true : false;
-
-    if (!isFinalTurn) isFinalTurn = this.currentTurn.number === numberOfTurns;
+    let isFinalTurn = this.currentTurn.number === numberOfTurns;
 
     this.logger.log(
       `Is final turn? ${isFinalTurn} : ${this.currentTurn.number} - ${numberOfTurns}`,

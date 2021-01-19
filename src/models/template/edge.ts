@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export class Node {
+  code: string;
+}
+
 export class Edge {
   @ApiProperty() code?: string;
   @ApiProperty() sequence?: number;
@@ -9,10 +13,6 @@ export class Edge {
   @ApiProperty() totalTime?: number;
   @ApiProperty() startTimeStamp?: string;
   @ApiProperty() endTimeStamp?: string;
-  @ApiProperty() startNode: {
-    code: string;
-  };
-  @ApiProperty() endNode: {
-    code: string;
-  };
+  @ApiProperty({ type: Node }) startNode: Node;
+  @ApiProperty({ type: Node }) endNode: Node;
 }
