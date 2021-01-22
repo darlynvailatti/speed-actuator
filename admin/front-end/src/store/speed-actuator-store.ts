@@ -37,6 +37,7 @@ class SpeedActuatorModule extends VuexModule
         numberOfTurns: 0,
         state: '',
         turns: [],
+        stopwatchers: [],
       };
   }
 

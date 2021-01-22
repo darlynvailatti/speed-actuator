@@ -1,4 +1,9 @@
-export interface Stopwatcher {}
+export interface Stopwatcher {
+  time: number;
+  beginEdgeSequenceNumber: number;
+  endEdgeSequenceNumber: number;
+  turns: Array<number>;
+}
 
 export interface EdgeNode {
   code: string;

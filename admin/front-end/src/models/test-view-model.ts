@@ -28,10 +28,18 @@ export interface TestViewTurn {
   isCompleted: boolean;
 }
 
+export interface TestViewStopwatch {
+  time: number;
+  beginEdgeSequenceNumber: number;
+  endEdgeSequenceNumber: number;
+  turns: Array<number>;
+}
+
 export interface TestViewModel {
   code: string;
   state: string;
   description: string;
   numberOfTurns: number;
   turns: Array<TestViewTurn>;
+  stopwatchers: Array<TestViewStopwatch>;
 }

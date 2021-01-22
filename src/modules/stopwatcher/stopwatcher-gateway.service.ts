@@ -47,6 +47,8 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
     this.logger.log(`Handling stopwatch`);
     await this.receiveAndParseUpdatedTestMessage(updatedTestState);
 
+    if (this.test.state != TestState.STARTED) return;
+
     const template: TestTemplate = this.test.template;
     const graph = template.graph;
 

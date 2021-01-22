@@ -3,6 +3,7 @@ import {
   TestViewEdge,
   TestViewModel,
   TestViewNode,
+  TestViewStopwatch,
   TestViewTurn,
 } from '@/models/test-view-model';
 import { useDefaultIfIsNone } from '@/utils/filter';
@@ -24,12 +25,21 @@ export class TestModelConverter {
       turns.push(testViewTurn);
     });
 
+    const testViewStopwatchers: Array<TestViewStopwatch> = [];
+    const stopwatchersOnGraph = this.test.template.graph.stopwatchers;
+    if (stopwatchersOnGraph && stopwatchersOnGraph.length > 0) {
+      stopwatchersOnGraph.forEach(s => {
+        testViewStopwatchers.push(s);
+      });
+    }
+
     return {
       code: this.test.code,
       state: this.test.state,
       description: this.test.template.description,
       numberOfTurns: this.test.template.numberOfTurns,
       turns: turns,
+      stopwatchers: testViewStopwatchers,
     };
   }
 
