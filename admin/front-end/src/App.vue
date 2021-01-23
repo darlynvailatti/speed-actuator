@@ -30,6 +30,8 @@
 import Vue from 'vue';
 import TestsView from '@/views/TestsView.vue';
 import Component from 'vue-class-component';
+import { speedActuatorStoreModule } from './store/speed-actuator-store';
+import { getBackendUrl } from './constants/utils';
 
 @Component({
   name: 'App',

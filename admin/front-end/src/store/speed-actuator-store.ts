@@ -1,6 +1,6 @@
 import { TestModel } from '@/models/test-mode';
 import { TestModelConverter } from '@/converter/convert-test-to-view';
-import { speedActuatorService } from '@/service/speed-actuator-service';
+import { speedActuatorServiceInstance } from '@/service/speed-actuator-service';
 import {
   VuexModule,
   Module,
@@ -13,6 +13,7 @@ import { TestViewModel } from '@/models/test-view-model';
 import { StopwatchProcess } from '@/models/stopwatch-model';
 
 export interface InterfaceSpeedActuatorState {
+  baseUrl: string;
   tests: Array<TestViewModel>;
   testViewCode: string;
   stopwatchProcesses: Array<StopwatchProcess>;
@@ -25,6 +26,7 @@ export interface InterfaceSpeedActuatorState {
 })
 class SpeedActuatorModule extends VuexModule
   implements InterfaceSpeedActuatorState {
+  public baseUrl!: string;
   public stopwatchProcesses: Array<StopwatchProcess> = [];
   public tests: Array<TestViewModel> = [];
   public testViewCode = '';
@@ -60,6 +62,11 @@ class SpeedActuatorModule extends VuexModule
   }
 
   @Mutation
+  public setBaseUrl(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  @Mutation
   public setTests(tests: Array<TestViewModel>): void {
     this.tests = tests;
   }
@@ -83,7 +90,7 @@ class SpeedActuatorModule extends VuexModule
 
   @Action({ rawError: true })
   public async updateTests(): Promise<void> {
-    const allTests: Array<TestModel> = await speedActuatorService.getAllTests();
+    const allTests: Array<TestModel> = await speedActuatorServiceInstance.getAllTests();
     const convertedTests: Array<TestViewModel> = [];
     allTests.forEach(t => {
       const converter = new TestModelConverter(t);
@@ -95,7 +102,7 @@ class SpeedActuatorModule extends VuexModule
 
   @Action({ rawError: true })
   public async updateStopwachProcesses(): Promise<void> {
-    const stopwatchProcesses = await speedActuatorService.getStopwatchProcesses();
+    const stopwatchProcesses = await speedActuatorServiceInstance.getStopwatchProcesses();
     this.context.commit('setStopwatchProcesses', stopwatchProcesses);
   }
 
@@ -110,7 +117,9 @@ class SpeedActuatorModule extends VuexModule
   @Action({ rawError: true })
   public async refreshTest(testCode: string) {
     try {
-      const refreshedTest = await speedActuatorService.getTestByCode(testCode);
+      const refreshedTest = await speedActuatorServiceInstance.getTestByCode(
+        testCode,
+      );
       await this.updateJustOneTest(refreshedTest);
     } catch (error) {
       throw new Error(`Error on refreshing the test ${testCode}: ${error}`);
@@ -120,7 +129,7 @@ class SpeedActuatorModule extends VuexModule
   @Action({ rawError: true })
   public async cancelTestExecution(testCode: string): Promise<void> {
     try {
-      await speedActuatorService.cancelTestExecution(testCode);
+      await speedActuatorServiceInstance.cancelTestExecution(testCode);
       this.updateTests();
     } catch (error) {
       return Promise.reject(error);
@@ -130,7 +139,7 @@ class SpeedActuatorModule extends VuexModule
   @Action({ rawError: true })
   public async setTestExecutionToReady(testCode: string): Promise<void> {
     try {
-      await speedActuatorService.setTestExecutionToReady(testCode);
+      await speedActuatorServiceInstance.setTestExecutionToReady(testCode);
       this.updateTests();
     } catch (error) {
       return Promise.reject(error);
