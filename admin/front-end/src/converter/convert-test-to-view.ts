@@ -3,7 +3,7 @@ import {
   TestViewEdge,
   TestViewModel,
   TestViewNode,
-  TestViewStopwatch,
+  TestViewStopwatchDefinition,
   TestViewTurn,
 } from '@/models/test-view-model';
 import { useDefaultIfIsNone } from '@/utils/filter';
@@ -25,7 +25,7 @@ export class TestModelConverter {
       turns.push(testViewTurn);
     });
 
-    const testViewStopwatchers: Array<TestViewStopwatch> = [];
+    const testViewStopwatchers: Array<TestViewStopwatchDefinition> = [];
     const stopwatchersOnGraph = this.test.template.graph.stopwatchers;
     if (stopwatchersOnGraph && stopwatchersOnGraph.length > 0) {
       stopwatchersOnGraph.forEach(s => {

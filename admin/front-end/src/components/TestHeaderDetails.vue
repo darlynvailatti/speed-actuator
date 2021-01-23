@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="ma-0 pa-0">
     <v-row no-gutters>
       <v-progress-linear
         :active="true"

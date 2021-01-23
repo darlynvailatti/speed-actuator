@@ -6,5 +6,6 @@ export function subscribeOnTestStateChannel(component: Vue) {
     const messageAsJson = JSON.parse(message);
     const testAsJson = JSON.parse(messageAsJson);
     speedActuatorStoreModule.updateJustOneTest(testAsJson);
+    speedActuatorStoreModule.updateStopwachProcesses();
   });
 }

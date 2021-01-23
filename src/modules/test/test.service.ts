@@ -80,7 +80,7 @@ export class TestService {
 
     const executionEdges = testExecutionTurn.executionEdges;
 
-    if (!executionEdges) return null;
+    if (!executionEdges || executionEdges.length <= 0) return null;
 
     return executionEdges
       .sort((x, y) => x.edge.sequence - y.edge.sequence)

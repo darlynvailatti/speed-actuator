@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { EnsureThat } from 'src/common/validate';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-processor';
+import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
 
 export interface StopwatchProcessorRequest {
   timeoutCallback: any;
@@ -35,7 +35,7 @@ export class StopwatchProcessorImplementation {
 
     while (true) {
       elapsedTime = Date.now() - startTimeStamp;
-      this.logger.log(`time elapsed: ${elapsedTime}`);
+      //this.logger.log(`time elapsed: ${elapsedTime}`);
 
       if (this.isDoneFunction(this.stopwatchProcess)) {
         this.logger.log(`Stopwatch done!`);

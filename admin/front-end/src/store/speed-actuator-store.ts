@@ -10,10 +10,12 @@ import {
 } from 'vuex-module-decorators';
 import store from '@/store/index';
 import { TestViewModel } from '@/models/test-view-model';
+import { StopwatchProcess } from '@/models/stopwatch-model';
 
 export interface InterfaceSpeedActuatorState {
   tests: Array<TestViewModel>;
   testViewCode: string;
+  stopwatchProcesses: Array<StopwatchProcess>;
 }
 
 @Module({
@@ -23,11 +25,11 @@ export interface InterfaceSpeedActuatorState {
 })
 class SpeedActuatorModule extends VuexModule
   implements InterfaceSpeedActuatorState {
+  public stopwatchProcesses: Array<StopwatchProcess> = [];
   public tests: Array<TestViewModel> = [];
   public testViewCode = '';
 
   get getTestView(): TestViewModel {
-    console.log('get test view by ' + this.testViewCode);
     const testView = this.tests.find(t => t.code === this.testViewCode);
     if (testView) return testView;
     else
@@ -45,6 +47,18 @@ class SpeedActuatorModule extends VuexModule
     return this.tests;
   }
 
+  get stopwatchProcessesOfTestView(): Array<StopwatchProcess> {
+    console.log(
+      `Searching for stopwatch processes for testCode: ${this.testViewCode}`,
+    );
+    const found = this.stopwatchProcesses.filter(s => {
+      console.log(s.testCode + ' ' + this.testViewCode);
+      return s.testCode === this.testViewCode;
+    });
+    console.log(`Found stopwatch processes: ${found}`);
+    return found;
+  }
+
   @Mutation
   public setTests(tests: Array<TestViewModel>): void {
     this.tests = tests;
@@ -55,8 +69,15 @@ class SpeedActuatorModule extends VuexModule
     this.testViewCode = testCode;
   }
 
+  @Mutation
+  public setStopwatchProcesses(stopwatchProcesses: Array<StopwatchProcess>) {
+    this.stopwatchProcesses = stopwatchProcesses;
+  }
+
   @Action({ rawError: true })
   public async viewTestByCode(testCode: string) {
+    await this.updateTests();
+    await this.updateStopwachProcesses();
     this.context.commit('setTestViewCode', testCode);
   }
 
@@ -70,6 +91,12 @@ class SpeedActuatorModule extends VuexModule
       convertedTests.push(convertedTest);
     });
     this.context.commit('setTests', convertedTests);
+  }
+
+  @Action({ rawError: true })
+  public async updateStopwachProcesses(): Promise<void> {
+    const stopwatchProcesses = await speedActuatorService.getStopwatchProcesses();
+    this.context.commit('setStopwatchProcesses', stopwatchProcesses);
   }
 
   @Action({ rawError: true })

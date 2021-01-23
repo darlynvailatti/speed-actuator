@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    {{ testView.stopwatchers }}
     <v-expansion-panels :value="currentTurnNumber - 1">
       <v-expansion-panel
         v-for="turn in testView.turns"
         v-bind:key="turn.number"
+        class="ma-0"
       >
         <v-expansion-panel-header>
           <v-container>
@@ -50,7 +50,7 @@
           </v-container>
         </v-expansion-panel-header>
         <v-divider />
-        <v-expansion-panel-content>
+        <v-expansion-panel-content class="pa-0">
           <v-stepper v-model="currentActiveEdgeSequence">
             <v-stepper-header>
               <template v-for="edge in turn.edges">
@@ -115,69 +115,96 @@
                       ></v-text-field>
                     </v-col>
                   </v-row>
-                </v-container>
 
-                <v-card
-                  class="d-flex justify-space-around mb-6"
-                  color="white"
-                  flat
-                  tile
-                >
-                  <v-card
-                    class="pa-1"
-                    outlined
-                    rounded
-                    :color="
-                      edge.startNode.recordedTimeStamp
-                        ? DEFAULT_CONCLUDE_COLOR_STATUS
-                        : ''
-                    "
-                  >
-                    <v-card-title>
-                      Node {{ edge.startNode.code }}
-                      <v-icon v-if="edge.startNode.recordedTimeStamp"
-                        >mdi-check</v-icon
+                  <v-row>
+                    <v-col>
+                      <v-card
+                        rounded
+                        :color="
+                          edge.startNode.recordedTimeStamp
+                            ? DEFAULT_CONCLUDE_COLOR_STATUS
+                            : ''
+                        "
                       >
-                    </v-card-title>
-                    <v-card-subtitle>start</v-card-subtitle>
-                    <v-card-text>
-                      <v-text-field
-                        :value="edge.startNode.recordedTimeStamp"
-                        label="Recorded timestamp"
-                        readonly
-                      ></v-text-field>
-                    </v-card-text>
-                  </v-card>
+                        <v-card-title>
+                          Node {{ edge.startNode.code }}
+                          <v-icon v-if="edge.startNode.recordedTimeStamp"
+                            >mdi-check</v-icon
+                          >
+                        </v-card-title>
+                        <v-card-subtitle>start</v-card-subtitle>
+                        <v-card-text>
+                          <v-text-field
+                            :value="edge.startNode.recordedTimeStamp"
+                            label="Recorded timestamp"
+                            readonly
+                          ></v-text-field>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                    <v-col cols="4" md="5">
+                      <v-container>
+                        <v-row
+                          fluid
+                          class="d-flex justify-center"
+                          justify="space-around"
+                          no-gutters
+                        >
+                          <v-icon large>
+                            mdi-arrow-right
+                          </v-icon>
+                        </v-row>
+                        <v-row
+                          justify="center"
+                          no-gutters
+                          v-for="item in stopwatchProcessForCurrentTurnAndEdge"
+                          v-bind:key="item.testCode + item.turn + item.edges"
+                        >
+                          <v-chip>
+                            <v-col cols="1" class="d-flex justify-center">
+                              <v-icon aria-hidden="false">
+                                mdi-clock
+                              </v-icon>
+                            </v-col>
+                            <v-col class="d-flex align-center flex-column">
+                              <div class="title">
+                                <test-view-stopwatch-process
+                                  :stopwatchProcess="item"
+                                />
+                              </div>
+                            </v-col>
+                          </v-chip>
+                        </v-row>
+                      </v-container>
+                    </v-col>
 
-                  <v-icon large>
-                    mdi-arrow-right
-                  </v-icon>
-                  <v-card
-                    class="pa-1"
-                    outlined
-                    rounded
-                    :color="
-                      edge.endNode.recordedTimeStamp
-                        ? DEFAULT_CONCLUDE_COLOR_STATUS
-                        : ''
-                    "
-                  >
-                    <v-card-title>
-                      Node {{ edge.endNode.code }}
-                      <v-icon v-if="edge.endNode.recordedTimeStamp"
-                        >mdi-check</v-icon
-                      ></v-card-title
-                    >
-                    <v-card-subtitle>end</v-card-subtitle>
-                    <v-card-text>
-                      <v-text-field
-                        :value="edge.endNode.recordedTimeStamp"
-                        label="Recorded timestamp"
-                        readonly
-                      ></v-text-field>
-                    </v-card-text>
-                  </v-card>
-                </v-card>
+                    <v-col>
+                      <v-card
+                        rounded
+                        :color="
+                          edge.endNode.recordedTimeStamp
+                            ? DEFAULT_CONCLUDE_COLOR_STATUS
+                            : ''
+                        "
+                      >
+                        <v-card-title>
+                          Node {{ edge.endNode.code }}
+                          <v-icon v-if="edge.endNode.recordedTimeStamp"
+                            >mdi-check</v-icon
+                          ></v-card-title
+                        >
+                        <v-card-subtitle>end</v-card-subtitle>
+                        <v-card-text>
+                          <v-text-field
+                            :value="edge.endNode.recordedTimeStamp"
+                            label="Recorded timestamp"
+                            readonly
+                          ></v-text-field>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -194,11 +221,13 @@ import {
   TestViewModel,
   TestViewTurn,
 } from '../models/test-view-model';
+import { StopwatchProcess } from '../models/stopwatch-model';
+import TestViewStopwatchProcess from '../components/TestViewStopwatch.vue';
 import { speedActuatorStoreModule } from '../store/speed-actuator-store';
 
 @Component({
   name: 'TestExecutionDetails',
-  components: {},
+  components: { TestViewStopwatchProcess },
 })
 export default class TestExecutionDetails extends Vue {
   DEFAULT_CONCLUDE_COLOR_STATUS = 'teal accent-2';
@@ -206,6 +235,29 @@ export default class TestExecutionDetails extends Vue {
   localTestView!: TestViewModel;
   currentActiveEdgeSequence = 0;
   currentTurnNumber = -1;
+
+  get stopwatchProcesses(): Array<StopwatchProcess> {
+    return speedActuatorStoreModule.stopwatchProcessesOfTestView;
+  }
+
+  get stopwatchProcessForCurrentTurnAndEdge() {
+    const stopwatchProcesses = this.stopwatchProcesses.filter(
+      sp =>
+        sp.turn === this.currentTurnNumber &&
+        sp.edgesSequences.indexOf(this.currentActiveEdgeSequence) >= 0,
+    );
+    return stopwatchProcesses;
+  }
+
+  get isCurrentTurnHasStopwatchDefinitions() {
+    const stopwatchDefinitionsForCurrentTurn = this.localTestView.stopwatchers.filter(
+      sd => sd.turns.filter(t => t === this.currentTurnNumber).length > 0,
+    );
+    return (
+      stopwatchDefinitionsForCurrentTurn &&
+      stopwatchDefinitionsForCurrentTurn.length > 0
+    );
+  }
 
   get testView(): TestViewModel {
     const t: TestViewModel = speedActuatorStoreModule.getTestView;

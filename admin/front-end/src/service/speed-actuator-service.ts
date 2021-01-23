@@ -1,3 +1,4 @@
+import { StopwatchProcess } from '@/models/stopwatch-model';
 import { TestModel } from '@/models/test-mode';
 import axios from 'axios';
 
@@ -27,6 +28,11 @@ class SpeedActuatorService {
   async getTestByCode(testCode: string) {
     const endpoint = `${this.URL}/test-view/${testCode}`;
     return (await axios.get<TestModel>(endpoint)).data;
+  }
+
+  async getStopwatchProcesses() {
+    const endpoint = `${this.URL}/stopwatch/all`;
+    return (await axios.get<StopwatchProcess>(endpoint)).data;
   }
 }
 

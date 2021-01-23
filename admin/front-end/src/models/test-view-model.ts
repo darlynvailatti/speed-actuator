@@ -3,7 +3,7 @@ export interface TestViewNode {
   recordedTimeStamp: string;
 }
 
-export interface TestViewStopwatcher {
+export interface TestViewStopwatchDefinition {
   time: number;
 }
 
@@ -15,7 +15,7 @@ export interface TestViewEdge {
   velocity: number;
   startNode: TestViewNode;
   endNode: TestViewNode;
-  stopWatchers: Array<TestViewStopwatcher>;
+  stopWatchers: Array<TestViewStopwatchDefinition>;
   isCompleted: boolean;
 }
 
@@ -28,7 +28,7 @@ export interface TestViewTurn {
   isCompleted: boolean;
 }
 
-export interface TestViewStopwatch {
+export interface TestViewStopwatchDefinition {
   time: number;
   beginEdgeSequenceNumber: number;
   endEdgeSequenceNumber: number;
@@ -41,5 +41,5 @@ export interface TestViewModel {
   description: string;
   numberOfTurns: number;
   turns: Array<TestViewTurn>;
-  stopwatchers: Array<TestViewStopwatch>;
+  stopwatchers: Array<TestViewStopwatchDefinition>;
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-0 ma-0">
     <highcharts :options="executionChart"></highcharts>
   </v-container>
 </template>
@@ -16,23 +16,14 @@ export default class TestViewExecutionChart extends Vue {
   get executionChart() {
     const testView: TestViewModel = speedActuatorStoreModule.getTestView;
 
+    if (!testView || !testView.turns || testView.turns.length <= 0) {
+      console.log('Rendering default chart...');
+      return this.defaultChart;
+    }
+
     const categories: string[] = [];
     const xAxis = {
       categories: categories,
-    };
-    const yAxis = {
-      title: {
-        text: 'Velocity (m/s)',
-      },
-    };
-
-    const plotOptions = {
-      line: {
-        dataLabels: {
-          enabled: true,
-        },
-        enableMouseTracking: false,
-      },
     };
 
     const series: any = [];
@@ -47,18 +38,52 @@ export default class TestViewExecutionChart extends Vue {
       t.edges.forEach(e => serie.data.push(e.velocity));
       series.push(serie);
     });
+
+    const defaultChart = this.defaultChart;
+    defaultChart.series = series;
+    defaultChart.xAxis.categories = categories;
+
+    return {
+      chart: defaultChart.chart,
+      title: defaultChart.title,
+      xAxis: defaultChart.xAxis,
+      yAxis: defaultChart.yAxis,
+      series: defaultChart.series,
+      plotOptions: defaultChart.plotOptions,
+    };
+  }
+
+  private get defaultChartPlotOptions() {
+    return {
+      line: {
+        dataLabels: {
+          enabled: true,
+        },
+        enableMouseTracking: false,
+      },
+    };
+  }
+
+  private get defaultChart() {
+    const cateogries: Array<string> = [];
     return {
       chart: {
         type: 'line',
         height: '250',
       },
       title: {
-        text: 'Velocity per Turn x Edge',
+        text: null,
       },
-      yAxis: yAxis,
-      xAxis: xAxis,
-      series: series,
-      plotOptions: plotOptions,
+      xAxis: {
+        categories: cateogries,
+      },
+      yAxis: {
+        title: {
+          text: 'Velocity (m/s)',
+        },
+      },
+      series: [],
+      plotOptions: this.defaultChartPlotOptions,
     };
   }
 }

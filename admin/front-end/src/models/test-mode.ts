@@ -1,4 +1,4 @@
-export interface Stopwatcher {
+export interface StopwatchDefinition {
   time: number;
   beginEdgeSequenceNumber: number;
   endEdgeSequenceNumber: number;
@@ -18,7 +18,7 @@ export interface Edge {
 }
 
 export interface TemplateGraph {
-  stopwatchers?: Array<Stopwatcher>;
+  stopwatchers?: Array<StopwatchDefinition>;
   edges: Array<Edge>;
 }
 

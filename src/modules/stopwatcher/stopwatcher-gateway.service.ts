@@ -13,7 +13,7 @@ import {
 } from 'src/models/execution/test.execution';
 import { EnsureThat } from 'src/common/validate';
 import { TestService } from '../test/test.service';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-processor';
+import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
 
 @Injectable()
 export class StopwatcherGatewayService implements OnApplicationBootstrap {
@@ -44,10 +44,18 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
   }
 
   private async handle(updatedTestState: string) {
-    this.logger.log(`Handling stopwatch`);
     await this.receiveAndParseUpdatedTestMessage(updatedTestState);
+    this.logger.log(
+      `New state change received for test ${this.test.code}, checking for if need to handle stopwatch`,
+    );
 
-    if (this.test.state != TestState.STARTED) return;
+    const isReadyOrIdle = [TestState.IDLE, TestState.READY].find(
+      s => s === this.test.state,
+    )
+      ? true
+      : false;
+
+    if (isReadyOrIdle) return;
 
     const template: TestTemplate = this.test.template;
     const graph = template.graph;
@@ -66,9 +74,22 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
       lastExecutionTurn,
     );
 
+    if (!lastExecutionEdge) {
+      this.logger.log(`Test ${this.test.code} hasn't execution edge`);
+      return;
+    }
+
     const edge = template.graph.edges.find(
       e => e.sequence === lastExecutionEdge.edge.sequence,
     );
+
+    if (!lastExecutionEdge.startNode.recordedTimeStamp) {
+      this.logger.log(
+        `Last execution edge ${lastExecutionEdge.edge.sequence} hasn't startTimeStamp yet!`,
+      );
+      return;
+    }
+
     EnsureThat.isNotNull(
       edge,
       `Can't find edge sequence ${lastExecutionEdge.edge.sequence} in graph of template ${template.code}`,
@@ -147,45 +168,54 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
   */
   private isDone(stopwatchProcess: StopwatchProcess) {
     let isDone = false;
+
     const test = stopwatchProcess.test;
-    const lastExecutionTurn: TestExecutionTurn = this.testService.getLastExecutionTurn(
-      test,
-    );
-    const lastExecutionEdge: TestExecutionEdge = this.testService.getLastExecutionEdge(
-      lastExecutionTurn,
-    );
 
-    const lastEdge = lastExecutionEdge.edge;
-
-    // Check if the last turn is greater then turn of stopwatchProcess
-    const turnIsFinished = lastExecutionTurn.number > stopwatchProcess.turn;
-    isDone = turnIsFinished;
-
-    const isTheLastTurn = lastExecutionTurn.number === test.numberOfTurns;
-    const endEdgeOfTemplate = test.template.graph.edges
-      .sort((a, b) => a.sequence - b.sequence)
-      .reverse()[0];
-    const isEndEdge = endEdgeOfTemplate.sequence === lastEdge.sequence;
-    const isLastTurnAndIsLastEdge =
-      isTheLastTurn && isEndEdge && lastExecutionEdge.endNode;
-
-    if (isLastTurnAndIsLastEdge) {
-      this.removeStopwatchProcess(stopwatchProcess);
-      return true;
-    }
-
-    if (!turnIsFinished) {
-      const lastEdgeSequenceOfStopwatch = stopwatchProcess.edges.reduce(
-        (a, b) => (a > b ? a : b),
+    if (test.state != TestState.STARTED) {
+      this.logger.log(
+        `Stopwatch isDone because Test ${test.code} is not running anymore...`,
       );
-      const firstEdgeSequenceOfStopwatch = stopwatchProcess.edges.reduce(
-        (a, b) => (a < b ? a : b),
+      isDone = true;
+    } else {
+      const lastExecutionTurn: TestExecutionTurn = this.testService.getLastExecutionTurn(
+        test,
+      );
+      const lastExecutionEdge: TestExecutionEdge = this.testService.getLastExecutionEdge(
+        lastExecutionTurn,
       );
 
-      // last edge is beetwen the edges of stopwatcherProcess
-      isDone =
-        lastEdge.sequence < firstEdgeSequenceOfStopwatch ||
-        lastEdge.sequence > lastEdgeSequenceOfStopwatch;
+      const lastEdge = lastExecutionEdge.edge;
+
+      // Check if the last turn is greater then turn of stopwatchProcess
+      const turnIsFinished = lastExecutionTurn.number > stopwatchProcess.turn;
+      isDone = turnIsFinished;
+
+      const isTheLastTurn = lastExecutionTurn.number === test.numberOfTurns;
+      const endEdgeOfTemplate = test.template.graph.edges
+        .sort((a, b) => a.sequence - b.sequence)
+        .reverse()[0];
+      const isEndEdge = endEdgeOfTemplate.sequence === lastEdge.sequence;
+      const isLastTurnAndIsLastEdge =
+        isTheLastTurn && isEndEdge && lastExecutionEdge.endNode;
+
+      if (isLastTurnAndIsLastEdge) {
+        this.removeStopwatchProcess(stopwatchProcess);
+        return true;
+      }
+
+      if (!turnIsFinished) {
+        const lastEdgeSequenceOfStopwatch = stopwatchProcess.edges.reduce(
+          (a, b) => (a > b ? a : b),
+        );
+        const firstEdgeSequenceOfStopwatch = stopwatchProcess.edges.reduce(
+          (a, b) => (a < b ? a : b),
+        );
+
+        // last edge is beetwen the edges of stopwatcherProcess
+        isDone =
+          lastEdge.sequence < firstEdgeSequenceOfStopwatch ||
+          lastEdge.sequence > lastEdgeSequenceOfStopwatch;
+      }
     }
 
     if (isDone) this.removeStopwatchProcess(stopwatchProcess);
