@@ -28,7 +28,7 @@
         v-for="action in actions"
         v-bind:key="action.description"
       >
-        <v-btn fab @click="action.action">
+        <v-btn fab dark @click="action.action">
           <v-icon>
             {{ action.icon }}
           </v-icon>

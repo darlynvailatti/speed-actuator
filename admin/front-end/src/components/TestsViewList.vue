@@ -6,6 +6,19 @@
       :items-per-page="5"
       class="elevation-1"
     >
+      <template v-slot:top>
+        <v-btn
+          fab
+          dark
+          v-bind="attrs"
+          v-on="on"
+          class="ma-2"
+          @click="newTest()"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon class="mr-2" @click="setTestExecutionToReady(item)">
           mdi-hand
@@ -61,6 +74,10 @@ export default class TestsViewList extends Vue {
 
   async viewTest(test: TestModel) {
     this.$router.push({ path: `/test-view/${test.code}` });
+  }
+
+  async newTest() {
+    this.$router.push({ path: `/test` });
   }
 
   showSnackbar(meessage: string) {

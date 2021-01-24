@@ -1,7 +1,5 @@
 <template>
-  <div class="home">
-    <tests-view-list />
-  </div>
+  <tests-view-list />
 </template>
 
 <script lang="ts">
