@@ -9,4 +9,4 @@ echo "2.1) Starting REDIS..."
 redis-server
 
 echo "2.2) Starting SPEED-ACTUATOR..."
-yarn start:prod
+yarn start:prod &> speed-acuator.runtime.log &
