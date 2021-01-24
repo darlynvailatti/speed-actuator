@@ -10,9 +10,9 @@ import { TestViewModel } from '../models/test-view-model';
 import { speedActuatorStoreModule } from '../store/speed-actuator-store';
 
 @Component({
-  name: 'TestViewExecutionChart',
+  name: 'TestViewTimeExecutionChart',
 })
-export default class TestViewExecutionChart extends Vue {
+export default class TestViewTimeExecutionChart extends Vue {
   get executionChart() {
     const testView: TestViewModel = speedActuatorStoreModule.getTestView;
 
@@ -35,7 +35,7 @@ export default class TestViewExecutionChart extends Vue {
         name: `Turn ${t.number}`,
         data: data,
       };
-      t.edges.forEach(e => serie.data.push(e.velocity));
+      t.edges.forEach(e => serie.data.push(e.totalTime));
       series.push(serie);
     });
 
@@ -79,7 +79,7 @@ export default class TestViewExecutionChart extends Vue {
       },
       yAxis: {
         title: {
-          text: 'Velocity (m/s)',
+          text: 'Total time (seconds)',
         },
       },
       series: [],

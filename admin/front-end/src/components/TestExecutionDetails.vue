@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    <v-expansion-panels :value="currentTurnNumber - 1">
+    <v-checkbox
+      v-model="enableAutoSwitchTurnExpansionPanel"
+      :label="`Enable auto switch to active turn?`"
+    ></v-checkbox>
+    <v-expansion-panels :value="activeTurnExpansionPanel">
       <v-expansion-panel
         v-for="turn in testView.turns"
         v-bind:key="turn.number"
@@ -268,6 +272,7 @@ export default class TestExecutionDetails extends Vue {
   localTestView!: TestViewModel;
   currentActiveEdgeSequence = 0;
   currentTurnNumber = -1;
+  enableAutoSwitchTurnExpansionPanel = false;
 
   get stopwatchProcesses(): Array<StopwatchProcess> {
     return speedActuatorStoreModule.stopwatchProcessesOfTestView;
@@ -290,6 +295,14 @@ export default class TestExecutionDetails extends Vue {
       stopwatchDefinitionsForCurrentTurn &&
       stopwatchDefinitionsForCurrentTurn.length > 0
     );
+  }
+
+  get activeTurnExpansionPanel() {
+    let indexActiveExpansionPanel = -1;
+    if (this.enableAutoSwitchTurnExpansionPanel) {
+      indexActiveExpansionPanel = this.currentTurnNumber - 1;
+    }
+    return indexActiveExpansionPanel;
   }
 
   get testView(): TestViewModel {
