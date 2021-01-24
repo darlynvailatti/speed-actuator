@@ -1,16 +1,17 @@
 version: '3'
 services:
-  redis:
-    image: redis:latest
-    container_name: redis-local
+  speed-actuator-engine:
+    image: darlynvailatti/speedactuator
+    container_name: speed_actuator
     ports:
-      - '6379:6379'
+      - '3001:3001'
     networks:
       - backend
-  redis-gui:
-    image: redislabs/redisinsight
+  redis:
+    image: redis:latest
+    container_name: redis
     ports:
-      - '8001:8001'
+      - '6379:6379'
     networks:
       - backend
 
