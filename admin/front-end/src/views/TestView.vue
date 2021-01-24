@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <test-header-details />
-    <test-view-execution-chart />
     <test-execution-details />
+    <test-view-execution-chart />
   </v-container>
 </template>
 

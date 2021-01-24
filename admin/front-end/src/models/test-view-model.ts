@@ -15,7 +15,6 @@ export interface TestViewEdge {
   velocity: number;
   startNode: TestViewNode;
   endNode: TestViewNode;
-  stopWatchers: Array<TestViewStopwatchDefinition>;
   isCompleted: boolean;
 }
 

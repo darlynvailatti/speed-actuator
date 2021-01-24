@@ -77,7 +77,6 @@ export class TestModelConverter {
         description: edge.description,
         endNode: endNode,
         startNode: startNode,
-        stopWatchers: [],
         isCompleted: false,
       };
 

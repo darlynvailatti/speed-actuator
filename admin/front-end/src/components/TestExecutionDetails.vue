@@ -60,8 +60,41 @@
                   :complete="edge.isCompleted"
                   :step="edge.sequence"
                   edit-icon="mdi-check"
+                  :set="
+                    (stopwatchDefinitions = findStopwatchDefinitionByTurnAndEdge(
+                      turn.number,
+                      edge.sequence,
+                    ))
+                  "
                 >
-                  {{ edge.description }}
+                  <v-row>
+                    <v-col>
+                      {{ edge.description }}
+                      <v-tooltip right v-if="stopwatchDefinitions.length > 0">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon v-bind="attrs" v-on="on">
+                            mdi-timer
+                          </v-icon>
+                        </template>
+                        <span>
+                          <p
+                            v-for="stopwatchDefinition in stopwatchDefinitions"
+                            v-bind:key="
+                              stopwatchDefinition.time +
+                                stopwatchDefinition.turns
+                            "
+                          >
+                            <v-row>
+                              <v-col>
+                                Base time:
+                                {{ stopwatchDefinition.time / 1000 }}'s
+                              </v-col>
+                            </v-row>
+                          </p>
+                        </span>
+                      </v-tooltip>
+                    </v-col>
+                  </v-row>
                 </v-stepper-step>
                 <v-icon
                   large
@@ -307,6 +340,31 @@ export default class TestExecutionDetails extends Vue {
       .find(t => !t.isCompleted);
     if (firstTurnNotCompletedYet)
       this.currentTurnNumber = firstTurnNotCompletedYet.number;
+  }
+  private findStopwatchDefinitionByTurnAndEdge(
+    turnNumber: number,
+    edgeSequence: number,
+  ) {
+    if (edgeSequence && turnNumber) {
+      return this.localTestView.stopwatchers.filter(s => {
+        if (s.turns.indexOf(turnNumber) < 0) {
+          return false;
+        }
+
+        const insideEdgeRange =
+          (edgeSequence > s.beginEdgeSequenceNumber &&
+            edgeSequence < s.endEdgeSequenceNumber) ||
+          (edgeSequence >= s.beginEdgeSequenceNumber &&
+            edgeSequence < s.endEdgeSequenceNumber) ||
+          (edgeSequence > s.beginEdgeSequenceNumber &&
+            edgeSequence <= s.endEdgeSequenceNumber) ||
+          (edgeSequence == s.beginEdgeSequenceNumber &&
+            edgeSequence == s.endEdgeSequenceNumber);
+
+        return insideEdgeRange;
+      });
+    }
+    return [];
   }
 }
 </script>
