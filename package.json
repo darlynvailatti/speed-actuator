@@ -31,7 +31,7 @@
     "@nestjs/websockets": "^7.6.4",
     "@types/dotenv-flow": "^3.1.0",
     "@types/redis": "^2.8.28",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "dotenv-flow": "^3.2.0",
     "nestjs-easyconfig": "^2.2.2",
