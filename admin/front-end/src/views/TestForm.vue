@@ -59,7 +59,7 @@ export default class TestForm extends Vue {
         stopwatchers: [],
       },
     },
-    testExecution: null,
+    testExecution: undefined,
   };
 
   templateFields = [

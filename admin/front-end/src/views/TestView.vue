@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <test-header-details />
     <test-execution-details />
     <v-row>

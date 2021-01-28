@@ -1,27 +1,21 @@
 <template>
   <v-app scroll>
-    <v-navigation-drawer v-model="drawer" app clipped>
-      <v-list dense>
-        <v-list-item
-          link
-          :to="item.routePath"
+    <v-navigation-drawer v-model="drawer" app fluid mini-variant>
+      <v-container fluid>
+        <v-btn
+          icon
           v-for="item in items"
           :key="item.name"
+          :to="item.routePath"
+          class="mb-2"
         >
-          <v-list-item-action>
-            <v-icon>mdi-{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-btn>
+      </v-container>
     </v-navigation-drawer>
 
     <v-content>
-      <v-container fluid class="ma-0 pa-0">
-        <router-view></router-view>
-      </v-container>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
@@ -39,13 +33,24 @@ import { getBackendUrl } from './constants/utils';
 })
 export default class App extends Vue {
   drawer = true;
-  items = [
+  items: Array<MenuItem> = [
     {
       routePath: '/',
       name: 'tests',
       label: 'Tests',
-      icon: 'pencil',
+      icon: 'mdi-pencil',
     },
   ];
+
+  private routeToItem(item: MenuItem) {
+    this.$router.resolve(item.routePath);
+  }
+}
+
+export interface MenuItem {
+  routePath: string;
+  name: string;
+  label: string;
+  icon: string;
 }
 </script>

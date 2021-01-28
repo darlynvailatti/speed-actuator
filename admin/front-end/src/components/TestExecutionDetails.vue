@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid class="pt-0">
     <v-checkbox
       v-model="enableAutoSwitchTurnExpansionPanel"
       :label="`Enable auto switch to active turn?`"
@@ -10,48 +10,56 @@
         v-bind:key="turn.number"
         class="ma-0"
       >
-        <v-expansion-panel-header>
-          <v-container>
-            <v-progress-linear
-              :active="true"
-              top
-              :value="turnConclusionPercentage(turn)"
-              height="10"
-              absolute
-              color="deep-purple accent-4"
-            ></v-progress-linear>
-            <v-row>
-              <v-col cols="1">
-                <v-icon v-if="turn.isCompleted">
-                  mdi-flag-checkered
-                </v-icon>
-                <div class="text-h4" v-text="turn.number"></div>
-              </v-col>
-              <v-col cols="1"><v-divider vertical/></v-col>
-              <v-col cols="2">
-                <v-chip>
-                  Total time:
-                  <div
-                    class="subtitle-2"
-                    v-text="turn.totalTime + '\'s'"
-                    v-if="turn.isCompleted"
-                  ></div>
-                </v-chip>
-              </v-col>
-              <v-col cols="3">
-                <v-chip>
-                  Start TimeStamp:
-                  <div class="subtitle-2" v-text="turn.startTimeStamp"></div>
-                </v-chip>
-              </v-col>
-              <v-col cols="4">
-                <v-chip>
-                  End TimeStamp:
-                  <div class="subtitle-2" v-text="turn.endTimeStamp"></div>
-                </v-chip>
-              </v-col>
-            </v-row>
-          </v-container>
+        <v-expansion-panel-header class="pb-0">
+          <v-progress-linear
+            :active="true"
+            top
+            :value="turnConclusionPercentage(turn)"
+            height="10"
+            absolute
+            color="deep-purple accent-4"
+          ></v-progress-linear>
+          <v-row class="pt-3">
+            <v-col cols="1" md="1" class="d-flex justify-center">
+              <v-row class="pt-2">
+                <v-col>
+                  <v-avatar color="primary" size="50">
+                    <span class="white--text headline">{{ turn.number }}</span>
+                  </v-avatar>
+                </v-col>
+                <v-col class="pt-5">
+                  <v-icon v-if="turn.isCompleted">
+                    mdi-flag-checkered
+                  </v-icon>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col>
+              <v-text-field
+                :value="turn.totalTime + '\'s'"
+                label="Total time"
+                v-if="turn.isCompleted"
+                readonly
+                filled
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                :value="turn.startTimeStamp"
+                label="Start TimeStamp"
+                readonly
+                filled
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                :value="turn.endTimeStamp"
+                label="End TimeStamp"
+                readonly
+                filled
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </v-expansion-panel-header>
         <v-divider />
         <v-expansion-panel-content class="pa-0">

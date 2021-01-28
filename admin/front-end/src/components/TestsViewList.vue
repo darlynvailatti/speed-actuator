@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-data-table
       :headers="testHeaders"
       :items="tests"
@@ -7,14 +7,7 @@
       class="elevation-1"
     >
       <template v-slot:top>
-        <v-btn
-          fab
-          dark
-          v-bind="attrs"
-          v-on="on"
-          class="ma-2"
-          @click="newTest()"
-        >
+        <v-btn fab dark class="ma-2" @click="newTest()">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </template>
