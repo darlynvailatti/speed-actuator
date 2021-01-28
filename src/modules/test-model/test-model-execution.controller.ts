@@ -8,7 +8,7 @@ import {
   Put,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { TestService } from './test.service';
+import { TestService } from './test-model.service';
 import { TestState } from 'src/models/execution/test';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConstantsApiTags } from 'src/constants/constants';
@@ -16,7 +16,7 @@ import { PostTest } from 'src/models/execution/post-test';
 import { Test } from 'src/models/execution/test';
 
 @Controller('test')
-export class TestExecutionController {
+export class TestModelExecutionController {
   constructor(private readonly testService: TestService) {}
 
   @ApiOperation({ summary: 'Post Test' })

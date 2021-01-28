@@ -1,5 +1,5 @@
 import { TestExecutionTurn } from 'src/models/execution/test.execution';
-import { ProcessorMidleOrEndOfTurn } from 'src/modules/test-state-updater/processor/processor-midle-or-end-of-test-execution';
+import { ProcessorMidleOrEndOfTurn } from 'src/modules/test-engine/processor/processor-midle-or-end-of-test-execution';
 
 describe('Proccess midle or end of test execution', () => {
   test('Invalid turn', () => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ValidationRequest, ValidationResponse } from './validation.dto';
 import { EnsureThat } from 'src/common/validate';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 
 @Injectable()
 export class TestTemplateValidatorService {

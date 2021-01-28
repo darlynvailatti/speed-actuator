@@ -3,10 +3,10 @@ import {
   TestExecutionTurn,
   TestExecutionEdge,
 } from 'src/models/execution/test.execution';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 import { Test, TestState } from 'src/models/execution/test';
 import { Logger } from '@nestjs/common';
-import { TestStateMachine } from 'src/modules/test/impl/test-state-machine';
+import { TestStateMachine } from 'src/modules/test-model/impl/test-state-machine';
 import { EnsureThat } from 'src/common/validate';
 import { Node } from 'src/models/template/edge';
 

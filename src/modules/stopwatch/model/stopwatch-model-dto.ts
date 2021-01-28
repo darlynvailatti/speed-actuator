@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
+import { StopwatchProcess } from 'src/models/execution/stopwatch-process';
 
 export default class StopwatchProcessDTO {
   @ApiProperty() testCode: string;

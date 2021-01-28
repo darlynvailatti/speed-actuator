@@ -1,12 +1,14 @@
 import { Edge } from './edge';
 import { Node } from './node';
 import { ApiProperty } from '@nestjs/swagger';
-import { Stopwatch } from './stopwatch';
+import { Stopwatch as StopwatchDefinition } from './stopwatch-definition';
 
 export class Graph {
   @ApiProperty() code?: string;
   @ApiProperty() description: string;
-  @ApiProperty({ type: [Stopwatch] }) stopwatchers?: Array<Stopwatch>;
+  @ApiProperty({ type: [StopwatchDefinition] }) stopwatcDefinitions?: Array<
+    StopwatchDefinition
+  >;
   @ApiProperty({ type: [Edge] }) edges?: Edge[];
   @ApiProperty({ type: [Node] }) nodes?: Node[];
 }

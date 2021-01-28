@@ -6,18 +6,18 @@ import {
   StopwatchProcessorImplementation,
   StopwatchProcessorRequest,
 } from './processor/stopwatcher-processor';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 import {
   TestExecutionTurn,
   TestExecutionEdge,
 } from 'src/models/execution/test.execution';
 import { EnsureThat } from 'src/common/validate';
-import { TestService } from '../test/test.service';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
+import { TestService } from '../test-model/test-model.service';
+import { StopwatchProcess } from 'src/models/execution/stopwatch-process';
 
 @Injectable()
-export class StopwatcherGatewayService implements OnApplicationBootstrap {
-  private readonly logger = new Logger(StopwatcherGatewayService.name);
+export class StopwatchHandlerService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(StopwatchHandlerService.name);
 
   private test: Test;
 
@@ -60,7 +60,7 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
     const template: TestTemplate = this.test.template;
     const graph = template.graph;
 
-    if (!graph.stopwatchers || graph.stopwatchers.length === 0) {
+    if (!graph.stopwatcDefinitions || graph.stopwatcDefinitions.length === 0) {
       this.logger.log(
         `Template ${template.code} don't have stopwatchers to process, ignored.`,
       );
@@ -96,7 +96,7 @@ export class StopwatcherGatewayService implements OnApplicationBootstrap {
     );
     const lastEdgeSequenceNumber = edge.sequence;
 
-    const stopwatchers = graph.stopwatchers;
+    const stopwatchers = graph.stopwatcDefinitions;
 
     // Try find some stopwatcher that matchs this last edge
     // sequence and is set for this turn

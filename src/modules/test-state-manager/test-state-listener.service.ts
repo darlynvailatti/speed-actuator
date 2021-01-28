@@ -1,14 +1,14 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { RedisConstants } from 'src/constants/constants';
-import { ExecutionStateGateway as ExecutionStateWS } from './execution-state-ws.service';
+import { TestStateWebsocket } from './test-state-websocket.service';
 import { RedisDatabase } from '../database/redis.database';
 
 @Injectable()
-export class StateUpdateListenerService implements OnApplicationBootstrap {
-  private readonly logger = new Logger(StateUpdateListenerService.name);
+export class TestStateListenerService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(TestStateListenerService.name);
 
   constructor(
-    private readonly executionStateWS: ExecutionStateWS,
+    private readonly testStateWebsocket: TestStateWebsocket,
     private readonly redisDatabase: RedisDatabase,
   ) {}
 
@@ -24,7 +24,7 @@ export class StateUpdateListenerService implements OnApplicationBootstrap {
 
   private handle(message: string): void {
     //this.logger.log(`receive message: ${message}`);
-    this.executionStateWS.publishEventOnTestViewChannel(
+    this.testStateWebsocket.publishEventOnTestViewChannel(
       JSON.stringify(message),
     );
   }

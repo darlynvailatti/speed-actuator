@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
 import { RedisConstants } from 'src/constants/constants';
 import { RedisDatabase } from '../database/redis.database';
-import { StateUpdaterService as TestStateUpdaterService } from '../test-state-updater/test-state-updater.service';
+import { StateEngineService as TestStateUpdaterService } from '../test-engine/test-engine.service';
 
 @Injectable()
 export class DetectionListenerService implements OnApplicationBootstrap {

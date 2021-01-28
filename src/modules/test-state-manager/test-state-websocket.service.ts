@@ -9,8 +9,8 @@ import { RedisConstants } from '../../constants/constants';
 import { Server } from 'socket.io';
 
 @WebSocketGateway()
-export class ExecutionStateGateway {
-  private logger: Logger = new Logger(ExecutionStateGateway.name);
+export class TestStateWebsocket {
+  private logger: Logger = new Logger(TestStateWebsocket.name);
 
   @WebSocketServer() private server: Server;
 

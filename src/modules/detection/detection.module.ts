@@ -3,11 +3,11 @@ import { DetectionController } from './detection.controller';
 import { DetectionPublisherService } from './detection-publisher.service';
 import { DatabaseModule } from '../database/database.module';
 import { DetectionListenerService } from './detection-listener.service';
-import { StateUpdaterModule } from '../test-state-updater/test-state-updater.module';
+import { StateEngineModule } from '../test-engine/test-engine.module';
 
 @Module({
-  imports: [DatabaseModule, StateUpdaterModule],
+  imports: [DatabaseModule, StateEngineModule],
   controllers: [DetectionController],
   providers: [DetectionPublisherService, DetectionListenerService],
 })
-export class DetectionModule { }
+export class DetectionModule {}

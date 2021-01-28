@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TestTemplateValidatorService } from './validation/test-template-validator.service';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 import {
   ValidationRequest,
   ValidationResponse,

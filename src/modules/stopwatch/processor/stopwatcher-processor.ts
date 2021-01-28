@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { EnsureThat } from 'src/common/validate';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
+import { StopwatchProcess } from 'src/models/execution/stopwatch-process';
 
 export interface StopwatchProcessorRequest {
   timeoutCallback: any;

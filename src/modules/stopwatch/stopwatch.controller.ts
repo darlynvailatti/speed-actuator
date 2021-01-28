@@ -1,15 +1,15 @@
 import { Controller, HttpException, HttpStatus, Get } from '@nestjs/common';
-import { StopwatcherGatewayService } from './stopwatcher-gateway.service';
+import { StopwatchHandlerService } from './stopwatch-handler.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConstantsApiTags } from 'src/constants/constants';
-import { StopwatchProcess } from 'src/models/execution/stopwatcher-process';
+import { StopwatchProcess } from 'src/models/execution/stopwatch-process';
 import StopwatchProcessDTO, {
   StopwatchDTOConverter,
 } from './model/stopwatch-model-dto';
 
 @Controller('stopwatch')
 export class StopwatchController {
-  constructor(private readonly stopWatcherGateway: StopwatcherGatewayService) {}
+  constructor(private readonly stopWatcherGateway: StopwatchHandlerService) {}
 
   @ApiOperation({ summary: 'Get all stopwatchers alive' })
   @ApiResponse({ status: 200, type: [StopwatchProcessDTO] })

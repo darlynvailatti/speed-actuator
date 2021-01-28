@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TestRepositoryService } from '../database/test-repository.service';
 import { Test, TestState } from 'src/models/execution/test';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 import {
   TestExecutionNode,
   TestExecutionTurn,
@@ -12,11 +12,11 @@ import { ProcessorBeginOfTestExecution } from './processor/processor-begin-of-te
 import { ProcessorMidleOrEndOfTurn } from './processor/processor-midle-or-end-of-test-execution';
 import ProcessorConvertDetectionToExecutionNode from './processor/processor-convert-detection-to-execution-node';
 import { ProcessorGetCurrentTurnOrCreateOne } from './processor/processor-get-current-turn-or-create-one';
-import { TestService } from '../test/test.service';
+import { TestService } from '../test-model/test-model.service';
 
 @Injectable()
-export class StateUpdaterService {
-  private readonly logger = new Logger(StateUpdaterService.name);
+export class StateEngineService {
+  private readonly logger = new Logger(StateEngineService.name);
 
   private testsInExecution: Array<Test>;
   private test: Test;

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TestExecutionController as TestController } from './test.controller';
-import { TestService } from './test.service';
+import { TestModelExecutionController as TestController } from './test-model-execution.controller';
+import { TestService } from './test-model.service';
 import { DatabaseModule } from '../database/database.module';
 import { TestTemplateModule } from '../test-template/test-template.module';
 
@@ -8,6 +8,6 @@ import { TestTemplateModule } from '../test-template/test-template.module';
   imports: [DatabaseModule, TestTemplateModule],
   controllers: [TestController],
   providers: [TestService],
-  exports: [TestService]
+  exports: [TestService],
 })
-export class TestModule {}
+export class TestModelModule {}

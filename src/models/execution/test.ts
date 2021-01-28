@@ -1,5 +1,5 @@
 import { TestExecution } from './test.execution';
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Test {

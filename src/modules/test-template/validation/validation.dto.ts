@@ -1,4 +1,4 @@
-import { TestTemplate } from 'src/models/template/test.template';
+import { TestTemplate } from 'src/models/template/test-template';
 
 export interface ValidationRequest {
   testTemplate: TestTemplate;
