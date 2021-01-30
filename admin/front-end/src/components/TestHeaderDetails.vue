@@ -125,10 +125,6 @@ export default class TestHeaderDetails extends Vue {
           t.edges.filter(e => e.isCompleted),
         );
       });
-
-      console.log(
-        `Completed edges: ${completedEdges.length} | total Edges: ${totalEdges}`,
-      );
       percentage = (completedEdges.length / totalEdges) * 100;
     }
     return percentage;

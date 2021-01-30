@@ -41,6 +41,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { speedActuatorStoreModule } from '../store/speed-actuator-store';
 import { TestModel } from '../models/test-mode';
+import { TEST_VIEW_PATH, TEST_FORM_PATH } from '../router/index';
 
 @Component({
   name: 'TestsViewList',
@@ -66,11 +67,11 @@ export default class TestsViewList extends Vue {
   }
 
   async viewTest(test: TestModel) {
-    this.$router.push({ path: `/test-view/${test.code}` });
+    this.$router.push({ path: `${TEST_VIEW_PATH}/${test.code}` });
   }
 
   async newTest() {
-    this.$router.push({ path: `/test` });
+    this.$router.push({ path: `${TEST_FORM_PATH}` });
   }
 
   showSnackbar(meessage: string) {

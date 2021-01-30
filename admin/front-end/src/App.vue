@@ -14,28 +14,26 @@
       </v-container>
     </v-navigation-drawer>
 
-    <v-content>
+    <v-main>
       <router-view></router-view>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import TestsView from '@/views/TestsView.vue';
 import Component from 'vue-class-component';
-import { speedActuatorStoreModule } from './store/speed-actuator-store';
-import { getBackendUrl } from './constants/utils';
+import { TESTS_VIEW_PATH } from './router/index';
 
 @Component({
   name: 'App',
-  components: { TestsView },
+  components: {},
 })
 export default class App extends Vue {
   drawer = true;
   items: Array<MenuItem> = [
     {
-      routePath: '/',
+      routePath: `${TESTS_VIEW_PATH}`,
       name: 'tests',
       label: 'Tests',
       icon: 'mdi-pencil',

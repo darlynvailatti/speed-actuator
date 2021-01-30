@@ -324,11 +324,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@formschema/native@^2.0.0-alpha.2":
-  version "2.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@formschema/native/-/native-2.0.0-alpha.2.tgz#793dabb7bfe5c2359124a3f44aeaa0ab9f309e5d"
-  integrity sha512-i6QWSdI74AwanYqj3SYQD5nHXGABNAK+RXkbpGVUFqhL/S7JKy7bhwIaoOvlsLpH6xOZAa9oIzTvseIM7PlZCA==
-
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"

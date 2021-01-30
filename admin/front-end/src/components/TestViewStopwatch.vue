@@ -41,7 +41,6 @@ export default class TestViewStopwatchProcess extends Vue {
   }
 
   start() {
-    console.log('Starting stopwatch...');
     const now = Date.now();
     this.elapsedTime = now - this.stopwatchProcess.startTimeStamp;
     this.baseFormattedTime = this.formatFromMillisecondsToStopwatchFormat(

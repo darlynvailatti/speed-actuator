@@ -17,7 +17,6 @@ export default class TestViewVelocityExecutionChart extends Vue {
     const testView: TestViewModel = speedActuatorStoreModule.getTestView;
 
     if (!testView || !testView.turns || testView.turns.length <= 0) {
-      console.log('Rendering default chart...');
       return this.defaultChart;
     }
 

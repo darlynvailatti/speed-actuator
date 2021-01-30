@@ -50,14 +50,10 @@ class SpeedActuatorModule extends VuexModule
   }
 
   get stopwatchProcessesOfTestView(): Array<StopwatchProcess> {
-    console.log(
-      `Searching for stopwatch processes for testCode: ${this.testViewCode}`,
-    );
     const found = this.stopwatchProcesses.filter(s => {
-      console.log(s.testCode + ' ' + this.testViewCode);
       return s.testCode === this.testViewCode;
     });
-    console.log(`Found stopwatch processes: ${found}`);
+
     return found;
   }
 

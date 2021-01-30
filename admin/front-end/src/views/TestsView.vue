@@ -5,7 +5,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import TestsViewList from '../components/TestsViewList.vue';
-import { speedActuatorStoreModule } from '../store/speed-actuator-store';
 import { subscribeOnTestStateChannel } from '../service/socket-service';
 
 @Component({

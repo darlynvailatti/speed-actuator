@@ -11,9 +11,7 @@ class SpeedActuatorService {
   }
 
   async getAllTests(): Promise<Array<TestModel>> {
-    console.log(axios.defaults.baseURL);
     const endpoint = `/test-view`;
-    console.log(endpoint);
     const tests = (await axios.get<Array<TestModel>>(endpoint)).data;
     return tests;
   }
