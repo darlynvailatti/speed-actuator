@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import TestsView from '../views/TestsView.vue';
 import TestView from '../views/TestView.vue';
 import TestForm from '../views/TestForm.vue';
+import SensorManagamentView from '../views/SensorManagementView.vue';
 
 Vue.use(VueRouter);
 
@@ -10,6 +11,7 @@ export const BASE_PATH = '/admin';
 export const TESTS_VIEW_PATH = `${BASE_PATH}`;
 export const TEST_VIEW_PATH = `${BASE_PATH}/test-view`;
 export const TEST_FORM_PATH = `${BASE_PATH}/test`;
+export const SENSOR_MANAGEMENT_PATH = `${BASE_PATH}/sensor-management`;
 
 const routes: Array<RouteConfig> = [
   {
@@ -31,6 +33,11 @@ const routes: Array<RouteConfig> = [
     path: `${TEST_FORM_PATH}/:test_code`,
     name: 'EditTest',
     component: TestForm,
+  },
+  {
+    path: SENSOR_MANAGEMENT_PATH,
+    name: 'SensorManagament',
+    component: SensorManagamentView,
   },
 ];
 

@@ -23,7 +23,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { TESTS_VIEW_PATH } from './router/index';
+import { TESTS_VIEW_PATH, SENSOR_MANAGEMENT_PATH } from './router/index';
 
 @Component({
   name: 'App',
@@ -36,6 +36,12 @@ export default class App extends Vue {
       routePath: `${TESTS_VIEW_PATH}`,
       name: 'tests',
       label: 'Tests',
+      icon: 'mdi-pencil',
+    },
+    {
+      routePath: `${SENSOR_MANAGEMENT_PATH}`,
+      name: 'sensor-management',
+      label: 'Sensor Management',
       icon: 'mdi-pencil',
     },
   ];

@@ -56,7 +56,7 @@ export default class TestForm extends Vue {
       numberOfTurns: 0,
       graph: {
         edges: [],
-        stopwatchers: [],
+        stopwatchDefinitions: [],
       },
     },
     testExecution: undefined,

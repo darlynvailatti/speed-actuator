@@ -41,7 +41,7 @@ class SpeedActuatorModule extends VuexModule
         numberOfTurns: 0,
         state: '',
         turns: [],
-        stopwatchers: [],
+        stopwatchDefinitions: [],
       };
   }
 
@@ -147,6 +147,12 @@ class SpeedActuatorModule extends VuexModule
     const converter = new TestModelConverter(test);
     const convertedTest = converter.convertToView();
     return convertedTest;
+  }
+
+  @Action({ rawError: true })
+  async receiveTestStateUpdateEvent(testAsJson: any) {
+    this.updateJustOneTest(testAsJson);
+    this.updateStopwachProcesses();
   }
 }
 export const speedActuatorStoreModule = getModule(SpeedActuatorModule);

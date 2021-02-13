@@ -296,7 +296,7 @@ export default class TestExecutionDetails extends Vue {
   }
 
   get isCurrentTurnHasStopwatchDefinitions() {
-    const stopwatchDefinitionsForCurrentTurn = this.localTestView.stopwatchers.filter(
+    const stopwatchDefinitionsForCurrentTurn = this.localTestView.stopwatchDefinitions.filter(
       sd => sd.turns.filter(t => t === this.currentTurnNumber).length > 0,
     );
     return (
@@ -367,7 +367,7 @@ export default class TestExecutionDetails extends Vue {
     edgeSequence: number,
   ) {
     if (edgeSequence && turnNumber) {
-      return this.localTestView.stopwatchers.filter(s => {
+      return this.localTestView.stopwatchDefinitions.filter(s => {
         if (s.turns.indexOf(turnNumber) < 0) {
           return false;
         }

@@ -18,7 +18,7 @@ export interface Edge {
 }
 
 export interface TemplateGraph {
-  stopwatchers?: Array<StopwatchDefinition>;
+  stopwatchDefinitions?: Array<StopwatchDefinition>;
   edges: Array<Edge>;
 }
 

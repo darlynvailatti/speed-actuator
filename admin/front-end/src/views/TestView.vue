@@ -22,6 +22,7 @@ import TestViewVelocityExecutionChart from '../components/TestViewVelocityExecut
 import TestViewTimeExecutionChart from '../components/TestViewTimeExecutionChart.vue';
 import { TestViewModel } from '../models/test-view-model';
 import { subscribeOnTestStateChannel } from '../service/socket-service';
+import { getSpeedActuatorBackendUrl } from '../constants/utils';
 
 @Component({
   name: 'TestView',
@@ -34,7 +35,7 @@ import { subscribeOnTestStateChannel } from '../service/socket-service';
 })
 export default class TestView extends Vue {
   created() {
-    subscribeOnTestStateChannel(this);
+    subscribeOnTestStateChannel();
   }
 
   async beforeMount() {

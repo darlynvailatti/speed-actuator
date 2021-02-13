@@ -15,7 +15,7 @@ import { subscribeOnTestStateChannel } from '../service/socket-service';
 })
 export default class TestsView extends Vue {
   created() {
-    subscribeOnTestStateChannel(this);
+    subscribeOnTestStateChannel();
   }
 }
 </script>

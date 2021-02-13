@@ -40,5 +40,5 @@ export interface TestViewModel {
   description: string;
   numberOfTurns: number;
   turns: Array<TestViewTurn>;
-  stopwatchers: Array<TestViewStopwatchDefinition>;
+  stopwatchDefinitions: Array<TestViewStopwatchDefinition>;
 }

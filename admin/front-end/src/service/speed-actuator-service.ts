@@ -1,10 +1,10 @@
 import { StopwatchProcess } from '@/models/stopwatch-model';
 import { TestModel } from '@/models/test-mode';
-import { getBackendUrl } from '../constants/utils';
+import { getSpeedActuatorBackendUrl } from '../constants/utils';
 import axios from 'axios';
 
 class SpeedActuatorService {
-  private URL = getBackendUrl();
+  private URL = getSpeedActuatorBackendUrl();
 
   constructor() {
     axios.defaults.baseURL = this.URL;

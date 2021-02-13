@@ -6,7 +6,7 @@ import { Stopwatch as StopwatchDefinition } from './stopwatch-definition';
 export class Graph {
   @ApiProperty() code?: string;
   @ApiProperty() description: string;
-  @ApiProperty({ type: [StopwatchDefinition] }) stopwatcDefinitions?: Array<
+  @ApiProperty({ type: [StopwatchDefinition] }) stopwatchDefinitions?: Array<
     StopwatchDefinition
   >;
   @ApiProperty({ type: [Edge] }) edges?: Edge[];

@@ -26,7 +26,7 @@ export class TestModelConverter {
     });
 
     const testViewStopwatchers: Array<TestViewStopwatchDefinition> = [];
-    const stopwatchersOnGraph = this.test.template.graph.stopwatchers;
+    const stopwatchersOnGraph = this.test.template.graph.stopwatchDefinitions;
     if (stopwatchersOnGraph && stopwatchersOnGraph.length > 0) {
       stopwatchersOnGraph.forEach(s => {
         testViewStopwatchers.push(s);
@@ -39,7 +39,7 @@ export class TestModelConverter {
       description: this.test.template.description,
       numberOfTurns: this.test.template.numberOfTurns,
       turns: turns,
-      stopwatchers: testViewStopwatchers,
+      stopwatchDefinitions: testViewStopwatchers,
     };
   }
 

@@ -60,9 +60,12 @@ export class StopwatchHandlerService implements OnApplicationBootstrap {
     const template: TestTemplate = this.test.template;
     const graph = template.graph;
 
-    if (!graph.stopwatcDefinitions || graph.stopwatcDefinitions.length === 0) {
+    if (
+      !graph.stopwatchDefinitions ||
+      graph.stopwatchDefinitions.length === 0
+    ) {
       this.logger.log(
-        `Template ${template.code} don't have stopwatchers to process, ignored.`,
+        `Template ${template} don't have stopwatchers to process, ignored.`,
       );
       return;
     }
@@ -96,7 +99,7 @@ export class StopwatchHandlerService implements OnApplicationBootstrap {
     );
     const lastEdgeSequenceNumber = edge.sequence;
 
-    const stopwatchers = graph.stopwatcDefinitions;
+    const stopwatchers = graph.stopwatchDefinitions;
 
     // Try find some stopwatcher that matchs this last edge
     // sequence and is set for this turn
