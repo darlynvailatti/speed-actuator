@@ -1,5 +1,5 @@
 import { speedActuatorStoreModule } from '../store/speed-actuator-store';
-import { speedSensorGatewayStoreModule } from '../store/speed-sensor-gateway';
+import { speedSensorGatewayStoreModule } from '../store/speed-sensor-gateway-store';
 import * as io from 'socket.io-client';
 
 const websocketSpeedActuator = io.connect(
@@ -25,26 +25,63 @@ export function subscribeOnTestStateChannel() {
     const testAsJson = JSON.parse(messageAsJson);
     speedActuatorStoreModule.receiveTestStateUpdateEvent(testAsJson);
   });
+
+  websocket.on('disconnect', (event: string) => {
+    console.log('Disconnect:' + event);
+  });
+
+  websocket.on('connect_error', (error: string) => {
+    console.log('connect_error: ' + error);
+  });
 }
 
 export function subscribeOnDetectionChannel() {
   console.log('Subscribing on sensor detection channel...');
   const websocket = websocketSensorGateway;
   websocket.on('sensor-gateway:detection', (data: string) => {
-    console.log(data);
-    const message = data.replaceAll('\\', '\\');
-    const messageAsJson = JSON.parse(message);
-    const testAsJson = JSON.parse(messageAsJson);
-    console.log(testAsJson);
+    const event = data.replaceAll('\\', '\\');
+    const eventAsJson = JSON.parse(event);
+    speedSensorGatewayStoreModule.receiveDetectionEvent(eventAsJson);
   });
+
+  websocket.on(
+    'connect_error',
+    speedSensorGatewayStoreModule.handleDisconnectionOnSensorDetectionChannel,
+  );
+
+  websocket.on(
+    'disconnect',
+    speedSensorGatewayStoreModule.handleDisconnectionOnSensorDetectionChannel,
+  );
+  websocket.on(
+    'connect',
+    speedSensorGatewayStoreModule.handleConnectionOnDetectionChannel,
+  );
 }
 
 export function subscribeOnSensorStateChannel() {
   console.log('Subscribing on sensor state channel...');
   const websocket = websocketSensorGateway;
   websocket.on('sensor-gateway:sensor-state', (data: string) => {
-    const message = data.replaceAll('\\', '\\');
-    const messageAsJson = JSON.parse(message);
-    console.log(messageAsJson);
+    const event = data.replaceAll('\\', '\\');
+    const eventAsJson = JSON.parse(event);
+    speedSensorGatewayStoreModule.receiveSensorStateEvent(
+      JSON.parse(eventAsJson),
+    );
   });
+
+  websocket.on(
+    'connect',
+    speedSensorGatewayStoreModule.handleConnectionOnSensorStateChannel,
+  );
+
+  websocket.on(
+    'disconnect',
+    speedSensorGatewayStoreModule.handleDisconnectionOnSensorStateChannel,
+  );
+
+  websocket.on(
+    'connect_error',
+    speedSensorGatewayStoreModule.handleDisconnectionOnSensorStateChannel,
+  );
 }

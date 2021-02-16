@@ -36,13 +36,13 @@ export default class App extends Vue {
       routePath: `${TESTS_VIEW_PATH}`,
       name: 'tests',
       label: 'Tests',
-      icon: 'mdi-pencil',
+      icon: 'mdi-axis-arrow',
     },
     {
       routePath: `${SENSOR_MANAGEMENT_PATH}`,
       name: 'sensor-management',
       label: 'Sensor Management',
-      icon: 'mdi-pencil',
+      icon: 'mdi-alarm-light',
     },
   ];
 
