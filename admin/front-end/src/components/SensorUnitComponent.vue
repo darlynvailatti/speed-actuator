@@ -32,9 +32,11 @@ export default class SensorUnitComponent extends Vue {
   private stateStyles = [
     { state: SensorState.IDLE, styleClass: 'idle_state' },
     { state: SensorState.LISTENING, styleClass: 'listening_state' },
+    { state: SensorState.DISCONNECTED, styleClass: 'disconnected_state' },
   ];
 
   get avatarStyle(): string {
+    console.log(this.sensorModel);
     const found = this.stateStyles.find(s => s.state == this.sensorModel.state);
     return found ? found.styleClass : 'default';
   }
@@ -46,7 +48,29 @@ export default class SensorUnitComponent extends Vue {
 }
 
 .listening_state {
-  border: 10px solid orange !important;
+  -webkit-animation: pulsating 1s ease-in-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes pulsating {
+  0% {
+    transform: scale(1, 1);
+    box-shadow: initial;
+  }
+
+  50% {
+    transform: scale(1.01, 1.01);
+    box-shadow: 0 0 20px 1px #3e3e3f;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    box-shadow: initial;
+  }
+}
+
+.disconnected_state {
+  background-color: lightcoral !important;
 }
 
 .default {

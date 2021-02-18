@@ -65,9 +65,8 @@ export function subscribeOnSensorStateChannel() {
   websocket.on('sensor-gateway:sensor-state', (data: string) => {
     const event = data.replaceAll('\\', '\\');
     const eventAsJson = JSON.parse(event);
-    speedSensorGatewayStoreModule.receiveSensorStateEvent(
-      JSON.parse(eventAsJson),
-    );
+    const sensorModelAsJson = eventAsJson.sensorModel;
+    speedSensorGatewayStoreModule.receiveSensorStateEvent(sensorModelAsJson);
   });
 
   websocket.on(

@@ -5,6 +5,7 @@ export interface DetectionModel {
 export enum SensorState {
   IDLE = 'idle',
   LISTENING = 'listening',
+  DISCONNECTED = 'disconnected',
 }
 
 export interface SensorModel {
