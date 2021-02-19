@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { InterfaceSpeedActuatorState } from './speed-actuator-store';
-import { InterfaceSpeedSensorGatewayModule } from './speed-sensor-gateway-store';
+import { InterfaceSpeedActuatorStore } from './speed-actuator-store';
+import { InterfaceSpeedSensorGatewayStore } from './speed-sensor-gateway-store';
 
 Vue.use(Vuex);
 
 export interface InterfaceRootState {
-  speedActuator: InterfaceSpeedActuatorState;
-  speedSensorGateway: InterfaceSpeedSensorGatewayModule;
+  speedActuator: InterfaceSpeedActuatorStore;
+  speedSensorGateway: InterfaceSpeedSensorGatewayStore;
 }
 
 export default new Vuex.Store<InterfaceRootState>({});

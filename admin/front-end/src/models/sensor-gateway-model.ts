@@ -16,7 +16,10 @@ export interface SensorModel {
   state: SensorState;
 }
 
-export interface EventChannelConnection {
-  name: string;
-  connected: boolean;
+export interface SensorDetectionModel {
+  sensor: {
+    uuid: string;
+  };
+  messageType: string;
+  timestamp: string;
 }

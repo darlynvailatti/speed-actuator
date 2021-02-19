@@ -12,22 +12,31 @@ import {
 } from '../service/socket-service';
 import { speedSensorGatewayServiceInstance } from '../service/speed-sensor-gateway-service';
 import {
+  DetectionModel,
+  SensorDetectionModel,
   SensorModel,
-  EventChannelConnection,
 } from '@/models/sensor-gateway-model';
-export interface InterfaceSpeedSensorGatewayModule {
+import {
+  EventChannelConnection,
+  InterfaceTransportChannelsConnection,
+} from '@/models/transport';
+
+export interface InterfaceSpeedSensorGatewayStore
+  extends InterfaceTransportChannelsConnection {
   sensors: Array<SensorModel>;
   sensorStateEventChannelConnection: EventChannelConnection;
   sensorDetectionEventChannelConnection: EventChannelConnection;
+  detections: Array<SensorDetectionModel>;
 }
 
 @Module({
   dynamic: true,
   name: 'speed-sensort-gateway-module',
+  namespaced: true,
   store,
 })
-class SpeedSensorGatewayModule extends VuexModule
-  implements InterfaceSpeedSensorGatewayModule {
+class SpeedSensorGatewayStore extends VuexModule
+  implements InterfaceSpeedSensorGatewayStore {
   sensors: Array<SensorModel> = [];
   sensorStateEventChannelConnection: EventChannelConnection = {
     name: 'StateEventChannel',
@@ -37,9 +46,17 @@ class SpeedSensorGatewayModule extends VuexModule
     name: 'DetectionEventChannel',
     connected: false,
   };
+  detections: Array<SensorDetectionModel> = [];
 
   get sortedSensors() {
     return this.sensors.sort((a, b) => (a.code > b.code ? 1 : -1));
+  }
+
+  get channels() {
+    return [
+      this.sensorDetectionEventChannelConnection,
+      this.sensorStateEventChannelConnection,
+    ];
   }
 
   @Mutation
@@ -49,6 +66,20 @@ class SpeedSensorGatewayModule extends VuexModule
   }) {
     updateConnectionStatus.eventChannelConnection.connected =
       updateConnectionStatus.isConnected;
+  }
+
+  @Mutation
+  public addNewSensorDetection(sensorDetection: SensorDetectionModel) {
+    this.detections.push(sensorDetection);
+  }
+
+  @Mutation
+  public removeSensorDetection(sensorDetection: SensorDetectionModel) {
+    console.log('Before: ' + this.detections);
+    this.detections = this.detections.filter(
+      d => d.sensor.uuid != sensorDetection.sensor.uuid,
+    );
+    console.log('After: ' + this.detections);
   }
 
   @Mutation
@@ -66,8 +97,10 @@ class SpeedSensorGatewayModule extends VuexModule
   }
 
   @Action({ rawError: true })
-  public receiveDetectionEvent(event: string) {
-    console.log(event);
+  public receiveDetectionEvent(sensorDetection: SensorDetectionModel) {
+    if (sensorDetection) {
+      this.context.commit('addNewSensorDetection', sensorDetection);
+    }
   }
 
   @Action({ rawError: true })
@@ -130,8 +163,11 @@ class SpeedSensorGatewayModule extends VuexModule
     const sensors = await this.getAllSensors();
     this.context.commit('updateSensors', sensors);
   }
+
+  @Action({ rawError: true })
+  public async consumeDetection(sensorDetection: SensorDetectionModel) {
+    this.context.commit('removeSensorDetection', sensorDetection);
+  }
 }
 
-export const speedSensorGatewayStoreModule = getModule(
-  SpeedSensorGatewayModule,
-);
+export const speedSensorGatewayStoreModule = getModule(SpeedSensorGatewayStore);

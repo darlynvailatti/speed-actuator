@@ -15,6 +15,11 @@ export const SENSOR_MANAGEMENT_PATH = `${BASE_PATH}/sensor-management`;
 
 const routes: Array<RouteConfig> = [
   {
+    path: '/',
+    name: 'Home',
+    component: TestsView,
+  },
+  {
     path: `${TESTS_VIEW_PATH}`,
     name: 'TestsView',
     component: TestsView,

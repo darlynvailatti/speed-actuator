@@ -1,15 +1,7 @@
 <template>
-  <div :v-set="(connection = connectionChannelsStatus)">
-    <v-progress-linear
-      indeterminate
-      v-if="!connection.allGood"
-      dense
-    ></v-progress-linear>
-    <v-alert dense :type="connection.status" tile>
-      {{ connection.statusMessage }}
-    </v-alert>
-
-    <v-container>
+  <div>
+    <channels-connection-status-component :store="store" />
+    <v-container mt-10>
       <v-row>
         <v-col v-for="s in sensors" :key="s.uuid" offset-md="1" offset-sm="1">
           <sensor-unit-component :sensorModel="s" />
@@ -22,70 +14,38 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { speedSensorGatewayStoreModule } from '../store/speed-sensor-gateway-store';
+import { SensorModel } from '../models/sensor-gateway-model';
 import {
+  ChannelsConnectionStatus,
   EventChannelConnection,
-  SensorModel,
-} from '../models/sensor-gateway-model';
+} from '../models/transport';
 import SensorUnitComponent from '../components/SensorUnitComponent.vue';
-
-export interface ChannelsStatus {
-  allGood: boolean;
-  statusMessage: string;
-  status: string;
-}
+import ChannelsConnectionStatusComponent from '../components/ChannelsConnectionStatusComponent.vue';
 
 @Component({
   name: 'SensorManagementView',
-  components: { SensorUnitComponent },
+  components: { SensorUnitComponent, ChannelsConnectionStatusComponent },
 })
 export default class SensorManagementView extends Vue {
-  created() {
+  mounted() {
     speedSensorGatewayStoreModule.subscribeOnDetectionChannel();
     speedSensorGatewayStoreModule.subscribeOnSensorStateChannel();
-  }
-
-  mounted() {
     speedSensorGatewayStoreModule.refreshSensors();
   }
 
-  get sensorStateChannelConnection(): EventChannelConnection {
-    return speedSensorGatewayStoreModule.sensorStateEventChannelConnection;
+  get channels(): Array<EventChannelConnection> {
+    return [
+      speedSensorGatewayStoreModule.sensorDetectionEventChannelConnection,
+      speedSensorGatewayStoreModule.sensorStateEventChannelConnection,
+    ];
   }
 
-  get sensorDetectionChannelConnection(): EventChannelConnection {
-    return speedSensorGatewayStoreModule.sensorDetectionEventChannelConnection;
+  get store() {
+    return speedSensorGatewayStoreModule;
   }
 
   get sensors(): Array<SensorModel> {
     return speedSensorGatewayStoreModule.sortedSensors;
-  }
-
-  get connectionChannelsStatus(): ChannelsStatus {
-    let statusMessage = '';
-    let allGood = false;
-    const channels = [
-      this.sensorStateChannelConnection,
-      this.sensorDetectionChannelConnection,
-    ];
-    let unavailableChannels: Array<EventChannelConnection> = [];
-
-    unavailableChannels = channels.filter(c => !c.connected);
-
-    if (unavailableChannels.length > 0) {
-      statusMessage = 'One or more channels are disconnected: ';
-      unavailableChannels.forEach(
-        c => (statusMessage = statusMessage.concat(c.name).concat(', ')),
-      );
-    } else {
-      statusMessage = 'All channels are connected and listening';
-      allGood = true;
-    }
-
-    return {
-      allGood: allGood,
-      statusMessage: statusMessage,
-      status: allGood ? 'info' : 'error',
-    };
   }
 }
 </script>

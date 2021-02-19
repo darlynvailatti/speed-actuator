@@ -1,13 +1,13 @@
 <template>
-  <v-container class="ma-0 pa-0">
-    <v-row no-gutters class="pb-0">
+  <v-container class="ma-0 pa-0" fluid>
+    <v-row>
       <v-progress-linear
         :active="true"
-        top
         :value="testConclusionPercentage"
         height="10"
-        absolute
         color="deep-purple accent-4"
+        ma-0
+        pa-0
       ></v-progress-linear>
       <v-col
         v-for="header in headers"

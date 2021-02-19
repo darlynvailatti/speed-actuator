@@ -11,25 +11,36 @@ import {
 import store from '@/store/index';
 import { TestViewModel } from '@/models/test-view-model';
 import { StopwatchProcess } from '@/models/stopwatch-model';
+import {
+  EventChannelConnection,
+  InterfaceTransportChannelsConnection,
+} from '@/models/transport';
 
-export interface InterfaceSpeedActuatorState {
+export interface InterfaceSpeedActuatorStore
+  extends InterfaceTransportChannelsConnection {
   baseUrl: string;
   tests: Array<TestViewModel>;
   testViewCode: string;
   stopwatchProcesses: Array<StopwatchProcess>;
+  testStateEventChannelConnection: EventChannelConnection;
 }
 
 @Module({
   dynamic: true,
   name: 'speed-actuator-module',
   store,
+  namespaced: true,
 })
-class SpeedActuatorModule extends VuexModule
-  implements InterfaceSpeedActuatorState {
+class SpeedActuatorStore extends VuexModule
+  implements InterfaceSpeedActuatorStore {
   public baseUrl!: string;
   public stopwatchProcesses: Array<StopwatchProcess> = [];
   public tests: Array<TestViewModel> = [];
   public testViewCode = '';
+  public testStateEventChannelConnection: EventChannelConnection = {
+    name: 'TestStateEventChannel',
+    connected: false,
+  };
 
   get getTestView(): TestViewModel {
     const testView = this.tests.find(t => t.code === this.testViewCode);
@@ -49,12 +60,25 @@ class SpeedActuatorModule extends VuexModule
     return this.tests;
   }
 
+  get channels() {
+    return [this.testStateEventChannelConnection];
+  }
+
   get stopwatchProcessesOfTestView(): Array<StopwatchProcess> {
     const found = this.stopwatchProcesses.filter(s => {
       return s.testCode === this.testViewCode;
     });
 
     return found;
+  }
+
+  @Mutation
+  public setUpdateConnectionStatus(updateConnectionStatus: {
+    eventChannelConnection: EventChannelConnection;
+    isConnected: boolean;
+  }) {
+    updateConnectionStatus.eventChannelConnection.connected =
+      updateConnectionStatus.isConnected;
   }
 
   @Mutation
@@ -154,5 +178,22 @@ class SpeedActuatorModule extends VuexModule
     this.updateJustOneTest(testAsJson);
     this.updateStopwachProcesses();
   }
+
+  // Transport channel events
+  @Action({ rawError: true })
+  handleConnectionOnTestStateChannel(connectEvent: string) {
+    this.context.commit('setUpdateConnectionStatus', {
+      eventChannelConnection: this.testStateEventChannelConnection,
+      isConnected: true,
+    });
+  }
+
+  @Action({ rawError: true })
+  handleDisconnectionOnTestStateChannel(disconnectEvent: string) {
+    this.context.commit('setUpdateConnectionStatus', {
+      eventChannelConnection: this.testStateEventChannelConnection,
+      isConnected: false,
+    });
+  }
 }
-export const speedActuatorStoreModule = getModule(SpeedActuatorModule);
+export const speedActuatorStoreModule = getModule(SpeedActuatorStore);

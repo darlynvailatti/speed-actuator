@@ -26,13 +26,19 @@ export function subscribeOnTestStateChannel() {
     speedActuatorStoreModule.receiveTestStateUpdateEvent(testAsJson);
   });
 
-  websocket.on('disconnect', (event: string) => {
-    console.log('Disconnect:' + event);
-  });
+  websocket.on(
+    'connect_error',
+    speedActuatorStoreModule.handleDisconnectionOnTestStateChannel,
+  );
 
-  websocket.on('connect_error', (error: string) => {
-    console.log('connect_error: ' + error);
-  });
+  websocket.on(
+    'disconnect',
+    speedActuatorStoreModule.handleDisconnectionOnTestStateChannel,
+  );
+  websocket.on(
+    'connect',
+    speedActuatorStoreModule.handleConnectionOnTestStateChannel,
+  );
 }
 
 export function subscribeOnDetectionChannel() {
