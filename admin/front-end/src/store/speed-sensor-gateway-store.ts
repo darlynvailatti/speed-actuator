@@ -15,6 +15,7 @@ import {
   DetectionModel,
   SensorDetectionModel,
   SensorModel,
+  SensorRawDataModel,
 } from '@/models/sensor-gateway-model';
 import {
   EventChannelConnection,
@@ -47,6 +48,7 @@ class SpeedSensorGatewayStore extends VuexModule
     connected: false,
   };
   detections: Array<SensorDetectionModel> = [];
+  sensorRawData: Array<SensorRawDataModel> = [];
 
   get sortedSensors() {
     return this.sensors.sort((a, b) => (a.code > b.code ? 1 : -1));
@@ -96,6 +98,11 @@ class SpeedSensorGatewayStore extends VuexModule
     this.sensors = allSensorsExceptTheOld;
   }
 
+  @Mutation
+  public addSensorRawData(sensorRawData: SensorRawDataModel) {
+    this.sensorRawData.push(sensorRawData);
+  }
+
   @Action({ rawError: true })
   public receiveDetectionEvent(sensorDetection: SensorDetectionModel) {
     if (sensorDetection) {
@@ -108,6 +115,13 @@ class SpeedSensorGatewayStore extends VuexModule
     if (sensorModel) {
       console.log('Receveid new sensor state event');
       this.context.commit('updateJustOneSensor', sensorModel);
+    }
+  }
+
+  @Action({ rawError: true })
+  receiveSensorRawData(sensorRawData: SensorRawDataModel) {
+    if (sensorRawData) {
+      this.context.commit('addSensorRawData', sensorRawData);
     }
   }
 

@@ -90,3 +90,14 @@ export function subscribeOnSensorStateChannel() {
     speedSensorGatewayStoreModule.handleDisconnectionOnSensorStateChannel,
   );
 }
+
+export function subscribeOnSensorRawDataChannel() {
+  console.log('Subscribing on sensor state channel...');
+  const websocket = websocketSensorGateway;
+  websocket.on('sensor-gateway:sensor-raw-data', (data: string) => {
+    const event = data.replaceAll('\\', '\\');
+    const eventAsJson = JSON.parse(event);
+    const sensorRawDataAsJson = eventAsJson;
+    speedSensorGatewayStoreModule.receiveSensorRawData(sensorRawDataAsJson);
+  });
+}

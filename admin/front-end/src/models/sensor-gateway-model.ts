@@ -23,3 +23,9 @@ export interface SensorDetectionModel {
   messageType: string;
   timestamp: string;
 }
+
+export interface SensorRawDataModel {
+  distance: number;
+  strenght: number;
+  temperature: number;
+}

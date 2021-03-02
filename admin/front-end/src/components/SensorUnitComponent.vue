@@ -13,7 +13,9 @@
             {{ sensorModel.code }}
           </div>
           <v-divider />
-          <v-icon size="35" class="pt-2">{{ iconStateRepresentation }}</v-icon>
+          <v-icon size="35" class="pt-2">{{
+            iconStateRepresentation.icon
+          }}</v-icon>
         </span>
       </v-avatar>
     </template>
@@ -53,13 +55,20 @@ export default class SensorUnitComponent extends Vue {
 
   get iconStateRepresentation() {
     const iconsStateMapping = [
-      { state: SensorState.IDLE, icon: '' },
-      { state: SensorState.LISTENING, icon: 'mdi-eye' },
-      { state: SensorState.DISCONNECTED, icon: 'mdi-connection' },
+      { state: SensorState.IDLE, icon: '', styleClass: '' },
+      {
+        state: SensorState.LISTENING,
+        icon: 'mdi-eye',
+        styleClass: 'alert-enabled',
+      },
+      {
+        state: SensorState.DISCONNECTED,
+        icon: 'mdi-connection',
+        styleClass: '',
+      },
     ];
     const icon = iconsStateMapping.find(i => i.state == this.sensorModel.state);
-    console.log(icon);
-    return icon ? icon.icon : '';
+    return icon ? icon : '';
   }
 
   get detections() {

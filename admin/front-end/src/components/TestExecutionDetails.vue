@@ -275,7 +275,7 @@ import { speedActuatorStoreModule } from '../store/speed-actuator-store';
   components: { TestViewStopwatchProcess },
 })
 export default class TestExecutionDetails extends Vue {
-  DEFAULT_CONCLUDE_COLOR_STATUS = 'teal accent-2';
+  DEFAULT_CONCLUDE_COLOR_STATUS = '';
 
   localTestView!: TestViewModel;
   currentActiveEdgeSequence = 0;

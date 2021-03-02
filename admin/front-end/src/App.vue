@@ -23,7 +23,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { TESTS_VIEW_PATH, SENSOR_MANAGEMENT_PATH } from './router/index';
+import {
+  TESTS_VIEW_PATH,
+  SENSOR_MANAGEMENT_PATH,
+  SENSOR_RAW_DATA_PATH,
+} from './router/index';
 
 @Component({
   name: 'App',
@@ -42,6 +46,12 @@ export default class App extends Vue {
       routePath: `${SENSOR_MANAGEMENT_PATH}`,
       name: 'sensor-management',
       label: 'Sensor Management',
+      icon: 'mdi-alarm-light',
+    },
+    {
+      routePath: `${SENSOR_RAW_DATA_PATH}`,
+      name: 'sensor-raw-data',
+      label: 'Sensor Raw Data',
       icon: 'mdi-alarm-light',
     },
   ];

@@ -4,6 +4,7 @@ import TestsView from '../views/TestsView.vue';
 import TestView from '../views/TestView.vue';
 import TestForm from '../views/TestForm.vue';
 import SensorManagamentView from '../views/SensorManagementView.vue';
+import SensorRawDataView from '../views/SensorRawDataView.vue';
 
 Vue.use(VueRouter);
 
@@ -12,6 +13,7 @@ export const TESTS_VIEW_PATH = `${BASE_PATH}`;
 export const TEST_VIEW_PATH = `${BASE_PATH}/test-view`;
 export const TEST_FORM_PATH = `${BASE_PATH}/test`;
 export const SENSOR_MANAGEMENT_PATH = `${BASE_PATH}/sensor-management`;
+export const SENSOR_RAW_DATA_PATH = `${BASE_PATH}/sensor-raw-data`;
 
 const routes: Array<RouteConfig> = [
   {
@@ -43,6 +45,11 @@ const routes: Array<RouteConfig> = [
     path: SENSOR_MANAGEMENT_PATH,
     name: 'SensorManagament',
     component: SensorManagamentView,
+  },
+  {
+    path: SENSOR_RAW_DATA_PATH,
+    name: 'SensorRawData',
+    component: SensorRawDataView,
   },
 ];
 
